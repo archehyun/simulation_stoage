@@ -9,7 +9,7 @@ import sim.model.SimModelManager;
 import sim.queue.SimNode;
 
 /**
- * @author ¹ÚÃ¢Çö
+ * @author ï¿½ï¿½Ã¢ï¿½ï¿½
  *
  */
 public class ATCJobManager extends SimModelManager{
@@ -29,52 +29,74 @@ public class ATCJobManager extends SimModelManager{
 
 	@Override
 	public void notifySimMessage() {
-		
+
+
 	}
 	@Override
 	public void process(SimNode node) {
 
-		System.out.println("log:process:"+this.getSimName()+","+this.getQueue().getSize());
+		//System.out.println("log:process:"+this.getSimName()+","+this.getQueue().getSize());
 		this.node = node;
 
-		SimEvent job = (SimEvent) node;
-		
-		
+		SimEvent atcJob = (SimEvent) node;
+
+		atcJob.add("atc", list);
+
 		Iterator<SimModel> iter = list.iterator();
+
 		while(iter.hasNext())
 		{
 			SimATC model = (SimATC) iter.next();
 
-			int blockId=((StoageEvent)node).getSlot().getBlock().getBlockID();
-			if(model.getAtcID()==blockId)
+			int blockId = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+
+
+			if ((model.getAtcID() % 100) == blockId)
 			{
-				model.append(node);
+
+				if (model.getAtcID() / 100 == 1) {
+					if (((StoageEvent) atcJob).getSlot().getBayIndex() < 12) {
+
+						model.append(atcJob);
+						break;
+					}
+				} else {
+					if (((StoageEvent) atcJob).getSlot().getBayIndex() > 12) {
+
+						model.append(atcJob);
+						break;
+					}
+				}
+
 			}
 		}
 
+		if (atcJob == null)
+			System.err.println("error");
+		this.notifyMonitor(atcJob);
+
 	}
-	
+
+
+
 	public SimATC getATC(int blockID,int atcID)
 	{
-		SimATC atc=null;
 		Iterator<SimModel> iter = list.iterator();
 
 		while(iter.hasNext())
 		{
 			SimATC model = (SimATC) iter.next();
-			
+
 			if(model.getAtcID()==blockID)
 			{
-				atc = model;
 				return model;
 			}
 		}
 		return null;
 	}
-	
+
 	public SimATC getATC(int atcID)
 	{
-		SimATC atc=null;
 		Iterator<SimModel> iter = list.iterator();
 
 		while(iter.hasNext())
@@ -83,7 +105,6 @@ public class ATCJobManager extends SimModelManager{
 
 			if(model.getAtcID()==atcID)
 			{
-				atc = model;
 				return model;
 			}
 		}
@@ -111,5 +132,12 @@ public class ATCJobManager extends SimModelManager{
 		// TODO Auto-generated method stub
 		return list.size();
 	}
+
+	@Override
+	public void notifySimMessage(SimModel model) {
+		// TODO Auto-generated method stub
+
+	}
+
 
 }

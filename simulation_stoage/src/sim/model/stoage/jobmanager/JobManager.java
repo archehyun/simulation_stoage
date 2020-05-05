@@ -11,7 +11,7 @@ import sim.model.stoage.block.Slot;
 import sim.queue.SimNode;
 
 /**
- * @author ¹ÚÃ¢Çö
+ * @author ï¿½ï¿½Ã¢ï¿½ï¿½
  *
  */
 public class JobManager extends SimModelManager{
@@ -54,10 +54,14 @@ public class JobManager extends SimModelManager{
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public synchronized void release()
 	{
 		generate.release();;
+	}
+
+	public void putOrder() {
+		generate.putOrder();
 	}
 
 
@@ -84,19 +88,18 @@ public class JobManager extends SimModelManager{
 		boolean flag=false;
 
 		BlockManager blockManager = BlockManager.getInstance();
-		
+
 		public synchronized void release()
 		{
 			ready = flag;
 			notify();
 		}
-		
+
 		public synchronized void ready()
 		{
 			ready =false;
-			//System.out.println("BUSY:"+atcManager.getBusyCount()+", "+atcManager.getATCCount());
 			while(atcManager.getBusyCount()==atcManager.getATCCount())
-			{	
+			{
 				try {
 					wait();
 				} catch (InterruptedException e) {
@@ -105,41 +108,37 @@ public class JobManager extends SimModelManager{
 				}
 			}
 		}
-		
-		
-		@Override
-		public void run() {
-			while(flag)
-			{
-				StoageEvent node = new StoageEvent(jobID);
 
-				Slot slot;
+		/**
+		 * ÁÖ¹® »ý¼º
+		 */
+		public void putOrder() {
+			StoageEvent node = new StoageEvent(jobID);
 
-				int n=rn.nextInt(10);
+			Slot slot;
 
-				int blockID = rn.nextInt(BlockManager.block);
-				
+			int n = rn.nextInt(10);
 
-				if(n>3&&blockManager.getContainerCount(blockID)>0)
-				{
-					slot=blockManager.selectFilledUpperSlot(blockID);
+			int blockID = rn.nextInt(BlockManager.block);
 
-					//blockManager.setEmpty(blockID,slot, true);
+			if (n > 3 && blockManager.getContainerCount(blockID) > 0) {
+				slot = blockManager.selectFilledUpperSlot(blockID);
 
-					System.out.println(blockID+", delete:"+slot+","+blockManager.getContainerCount(blockID));
 
-					notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
-					node.eventType = StoageEvent.OUTBOUND;
-				}
-				else
-				{
-					slot=blockManager.selectEmptySlot(blockID);
+				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
+				node.eventType = StoageEvent.OUTBOUND;
+			} else {
+				slot = blockManager.selectEmptySlot(blockID);
 
-					//blockManager.setEmpty(blockID,slot, false);
-					System.out.println(blockID+", insert:"+slot+","+blockManager.getContainerCount(blockID));
-					notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
-					node.eventType =StoageEvent.INBOUND;
-				}
+				//blockManager.setEmpty(blockID,slot, false);
+				//System.out.println(blockID+", insert:"+slot+","+blockManager.getContainerCount(blockID));
+				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
+				node.eventType = StoageEvent.INBOUND;
+			}
+
+			// slot null ¿À·ù ¹ß»ý
+
+			try {
 				slot.setUsed(true);
 
 				node.setSlot(slot);
@@ -150,24 +149,21 @@ public class JobManager extends SimModelManager{
 				atcManager.append(node);
 
 				jobID++;
-				
-				
-				//if(atcManager.getBusyCount()==atcManager.getATCCount())
-				{
-					ready();
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				/*else
-				{
-					System.out.println("atc busy:"+atcManager.getBusyCount());
-				}*/
+			} catch (NullPointerException e) {
+				System.err.println("error block:" + blockID);
+				e.printStackTrace();
+			}
 
-				
+		}
+
+		@Override
+		public void run() {
+			while(flag)
+			{
+				putOrder();
+				ready();
+
+
 			}
 
 		}

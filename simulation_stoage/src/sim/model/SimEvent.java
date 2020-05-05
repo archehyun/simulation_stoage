@@ -1,38 +1,46 @@
 package sim.model;
 
+import java.util.HashMap;
+
 import sim.queue.SimNode;
 
 /**
- * @author ¹ÚÃ¢Çö
+ * @author è«›ï¿½ï§¡ì€ï¿½ï¿½
  *
  */
 public class SimEvent extends SimNode{
-	
+
+	HashMap<String, Object> map;
+
 	/**
-	 * ½Ã¹Ä·¹ÀÌ¼Ç ¸ğµ¨ ÀÌ¸§
+	 *
 	 */
 	public String simName;
-	
+
 	/**
-	 * ÀÌº¥Æ® Å¸ÀÔ
+	 * å ì‹±ë¸ì˜™íŠ¸ íƒ€å ì™ì˜™
 	 */
 	public int eventType;
-	
+
 	/**
-	 * 
+	 *
 	 */
-	private String eventMessage;
-	
-	
-	
+	private String eventMessage = "";
+
+	public SimEvent() {
+		super();
+		map = new HashMap<>();
+
+	}
+
 	public String getSimName() {
 		return simName;
 	}
 
 	public void setSimName(String simName) {
 		this.simName = simName;
-	}	
-	
+	}
+
 	public String getEventMessage() {
 		return eventMessage;
 	}
@@ -42,13 +50,22 @@ public class SimEvent extends SimNode{
 	}
 
 	private int jobID;
-	
+
 	public int getJobID() {
 		return jobID;
 	}
 
 	public SimEvent(int jobID) {
+		this();
 		this.jobID = jobID;
 	}
 
+	public void add(String key, Object value)
+	{
+		map.put(key, value);
+	}
+
+	public Object get(String key) {
+		return map.get(key);
+	}
 }

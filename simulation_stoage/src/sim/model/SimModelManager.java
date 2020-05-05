@@ -12,27 +12,28 @@ import sim.view.IFMonitor;
  *
  */
 public abstract class SimModelManager extends SimModel{
-	
+
 	/**
 	 * 시뮬레이션 모델 리스트
 	 */
 	protected List<SimModel> list;
-	
+
 	protected SimNode node;
-	
+
 	protected SimModelManager(String simName) {
 		super(simName);
 		list = new LinkedList<>();
-		
+
 	}
-	
+
 	public void addSimModel(SimModel model)
 	{
 		list.add(model);
-		
+
 	}
-	
-	
+
+
+	@Override
 	public void addMonitor(IFMonitor monitor)
 	{
 		super.addMonitor(monitor);
@@ -42,16 +43,16 @@ public abstract class SimModelManager extends SimModel{
 			SimModel model= iter.next();
 			model.addMonitor(monitor);
 		}
-		
-		
+
+
 	}
-	
+
 	/**
 	 * 시뮬레이션 시작
 	 */
+	@Override
 	public void simStart()
 	{
-		
 		super.simStart();
 		Iterator<SimModel> iter = list.iterator();
 		while(iter.hasNext())
@@ -63,6 +64,7 @@ public abstract class SimModelManager extends SimModel{
 	/**
 	 *  시뮬레이션 종료
 	 */
+	@Override
 	public void simStop()
 	{
 		super.simStop();
@@ -74,9 +76,12 @@ public abstract class SimModelManager extends SimModel{
 		}
 	}
 
-	
-	
-	
+	@Override
+	public void notifySimMessage(SimModel model) {
+		// TODO Auto-generated method stub
+
+	}
+
 
 
 }
