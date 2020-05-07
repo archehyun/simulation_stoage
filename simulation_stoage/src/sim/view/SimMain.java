@@ -30,6 +30,7 @@ import sim.model.stoage.atc.SimATC;
 import sim.model.stoage.atc.crossover.CrossOverJobManager;
 import sim.model.stoage.atc.twin.LandSideATC;
 import sim.model.stoage.atc.twin.SeaSideATC;
+import sim.model.stoage.atc.twin.TwinJobManager;
 import sim.model.stoage.block.BlockManager;
 import sim.model.stoage.jobmanager.JobManager;
 import sim.model.stoage.jobmanager.UnparserableCommandException;
@@ -45,7 +46,9 @@ public class SimMain {
 
 	SimMap canvas = new SimMap();
 
-	ATCJobManager atcManager = CrossOverJobManager.getInstance();
+	ATCJobManager atcManager1 = CrossOverJobManager.getInstance();
+
+	ATCJobManager atcManager2 = TwinJobManager.getInstance();
 
 	JobManager jobManager = JobManager.getInstance();
 
@@ -67,7 +70,6 @@ public class SimMain {
 		for(int i=0;i<BlockManager.block;i++)
 		{
 			SimATC atc1 = new SeaSideATC("atc_sea-" + i, i + SimATC.SEA_SIDE);
-
 			atc1.setInitLocation(0, 0);
 			SimATC atc2 = new LandSideATC("atc_land-" + i, i + SimATC.LAND_SIDE);
 			atc2.setInitLocation(0, 25);
