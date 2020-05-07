@@ -8,7 +8,7 @@ import sim.model.stoage.jobmanager.JobManager;
 import sim.queue.SimNode;
 
 /**
- * @author LDCC
+ * @author ARCHEHYUN
  *
  */
 public class ATCLandSideMoveY extends ATCMove {
@@ -20,9 +20,9 @@ public class ATCLandSideMoveY extends ATCMove {
 	}
 
 	@Override
-	void moveDestination(SimEvent job) {
+	public void moveDestination(SimEvent job) {
 
-		System.out.println("move dt:" + getDestination() + "," + atc.getY());
+
 		do {
 			if (getDestination() > atc.getY()) {
 
@@ -35,7 +35,6 @@ public class ATCLandSideMoveY extends ATCMove {
 			try {
 				Thread.sleep(atc.getSpeed());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -44,15 +43,12 @@ public class ATCLandSideMoveY extends ATCMove {
 		} while (getDestination() != atc.getY() && isFlag());
 	}
 
-	@Override
-	public void notifyMonitor(String message) {
-		atc.notifyMonitor(message);
-	}
+
 
 	@Override
-	void moveTP(SimEvent job) {
+	public void moveTP(SimEvent job) {
 
-		System.out.println("move tp:" + getDestination() + "," + atc.getX());
+		//System.out.println("move tp:" + getDestination() + "," + atc.getX());
 		do {
 			if (atc.getInitYpointOnWindows() > atc.getY()) {
 				atc.plusY();
@@ -63,7 +59,6 @@ public class ATCLandSideMoveY extends ATCMove {
 			try {
 				Thread.sleep(atc.getSpeed());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -78,7 +73,12 @@ public class ATCLandSideMoveY extends ATCMove {
 	}
 
 	@Override
-	public void process(SimNode node) {
+	public void notifyMonitor(String message) {
+		atc.notifyMonitor(message);
+	}
+
+	@Override
+	public void process(SimNode node) throws InterruptedException {
 		StoageEvent job = (StoageEvent) node;
 
 		setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
@@ -87,52 +87,41 @@ public class ATCLandSideMoveY extends ATCMove {
 		case StoageEvent.INBOUND:
 
 			moveTP(job);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			// hoist work
+			Thread.sleep(500);
+
 			atc.setLoad(true);
+
 			moveDestination(job);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			// hoist work
+			Thread.sleep(500);
+
 			atc.setLoad(false);
 			job.getSlot().setUsed(false);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
 			jobManager.release();
 
-			atc.workCount++;
+			atc.plusWorkCount();
 
 			break;
 		case StoageEvent.OUTBOUND:
 
 			moveDestination(job);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Thread.sleep(500);
+
 			atc.setLoad(true);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
 			jobManager.release();
 			moveTP(job);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Thread.sleep(500);
+
 			atc.setLoad(false);
-			atc.workCount++;
+			atc.plusWorkCount();
 			break;
 
 		default:

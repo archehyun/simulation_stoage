@@ -12,11 +12,8 @@ import sim.queue.SimNode;
  */
 public class ATCMoveX extends ATCMove {
 
-	@Override
-	public void notifyMonitor(String message) {
-		//this.notifyMonitor(message);
-	}
-
+	
+	
 
 	public ATCMoveX(String simName, SimATC atc) {
 		super(simName, atc);
@@ -24,13 +21,12 @@ public class ATCMoveX extends ATCMove {
 	}
 
 
-	@Override
 	public void notifySimMessage() {
 		atc.arrival(atc.getX(), atc.getY());
 	}
 
 	@Override
-	void moveTP(SimEvent job) {
+	public void moveTP(SimEvent job) {
 		do {
 			if (atc.getInitX() > atc.getX()) {
 				atc.plusX();
@@ -40,7 +36,6 @@ public class ATCMoveX extends ATCMove {
 			try {
 				Thread.sleep(atc.getSpeed());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -50,7 +45,7 @@ public class ATCMoveX extends ATCMove {
 	}
 
 	@Override
-	void moveDestination(SimEvent job) {
+	public void moveDestination(SimEvent job) {
 		do {
 			if (getDestination() > atc.getX()) {
 				atc.plusX();
@@ -60,7 +55,6 @@ public class ATCMoveX extends ATCMove {
 			try {
 				Thread.sleep(atc.getSpeed());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

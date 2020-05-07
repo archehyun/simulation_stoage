@@ -7,11 +7,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -22,11 +26,13 @@ import javax.swing.event.ChangeListener;
 
 import sim.model.SimEvent;
 import sim.model.stoage.atc.ATCJobManager;
-import sim.model.stoage.atc.LandSideATC;
-import sim.model.stoage.atc.SeaSideATC;
 import sim.model.stoage.atc.SimATC;
+import sim.model.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.stoage.atc.twin.LandSideATC;
+import sim.model.stoage.atc.twin.SeaSideATC;
 import sim.model.stoage.block.BlockManager;
 import sim.model.stoage.jobmanager.JobManager;
+import sim.model.stoage.jobmanager.UnparserableCommandException;
 
 /**
  * @author  占쏙옙창占쏙옙
@@ -39,29 +45,38 @@ public class SimMain {
 
 	SimMap canvas = new SimMap();
 
-	ATCJobManager atcManager = ATCJobManager.getInstance();
+	ATCJobManager atcManager = CrossOverJobManager.getInstance();
+
 	JobManager jobManager = JobManager.getInstance();
+
 	BlockManager blockManager = BlockManager.getInstance();
+
 	JFrame frame;
+
 	private SimView txfArea;
 
 	EquipTable equipTable;
 
+	private JCheckBox bOX;
+
 	public void init()
 	{
+
+		// ATC Init
+
 		for(int i=0;i<BlockManager.block;i++)
 		{
-			SimATC atc1 = new SeaSideATC("atc_sea" + i, i + 100);
+			SimATC atc1 = new SeaSideATC("atc_sea-" + i, i + SimATC.SEA_SIDE);
 
 			atc1.setInitLocation(0, 0);
-			SimATC atc2 = new LandSideATC("atc_land" + i, i + 200);
+			SimATC atc2 = new LandSideATC("atc_land-" + i, i + SimATC.LAND_SIDE);
 			atc2.setInitLocation(0, 25);
 
 			atcManager.addSimModel(atc1);
 			atcManager.addSimModel(atc2);
 		}
 
-		blockManager.blockInit();
+
 
 		atcManager.addMonitor(equipTable);
 
@@ -133,6 +148,40 @@ public class SimMain {
 
 		JTextField txfInput = new JTextField();
 
+		txfInput.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					JTextField tf = (JTextField) e.getSource();
+					System.out.println(tf.getText() + ":enter");
+
+					try {
+						jobManager.putCommand(tf.getText());
+					} catch (UnparserableCommandException e1) {
+						JOptionPane.showMessageDialog(frame, "command error");
+					} catch (ArrayIndexOutOfBoundsException e2) {
+
+						JOptionPane.showMessageDialog(frame, "index error");
+
+					}
+				}
+			}
+		});
+
+
 		pnControl.add(txfInput);
 
 		pnControl.add(getButtons(),BorderLayout.EAST);
@@ -146,16 +195,14 @@ public class SimMain {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
 				JFrame frame=(JFrame) e.getComponent();
-				System.out.println("frmae:" + frame.getSize());
 
-				float rate = frame.getSize().width / 250;
+				float rate = frame.getSize().width / 300;
 
 				BlockManager.blockRate = rate;
 
@@ -185,6 +232,11 @@ public class SimMain {
 	{
 		JPanel pnMain = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
+		bOX = new JCheckBox("Init");
+		bOX.setSelected(true);
+
+		pnMain.add(bOX);
+
 		JToggleButton butStart = new JToggleButton();
 		butStart.setMnemonic('S');
 
@@ -203,6 +255,10 @@ public class SimMain {
 				abstractButton.getModel();
 
 				if (butStart.isSelected()) {
+
+					if (bOX.isSelected()) {
+						blockManager.blockInit();
+					}
 					abstractButton.setText("Stop");
 					simulationStart();
 				} else {

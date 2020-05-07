@@ -7,6 +7,12 @@ import sim.queue.SimNode;
  *
  */
 public interface IFSimModel {
+
+	/**
+	 *
+	 * @see append simMessage
+	 * @param node
+	 */
 	public void append(SimNode node);
 
 }

@@ -5,10 +5,12 @@ import java.awt.Graphics;
 
 import sim.model.stoage.atc.ATCJobManager;
 import sim.model.stoage.atc.SimATC;
+import sim.model.stoage.atc.crossover.CrossOverJobManager;
 import sim.model.stoage.block.BlockManager;
 
 public class SimViewATC extends SimViewObject{
-	ATCJobManager manager = ATCJobManager.getInstance();
+
+	ATCJobManager manager = CrossOverJobManager.getInstance();
 
 	SimATC atc;
 
@@ -48,7 +50,7 @@ public class SimViewATC extends SimViewObject{
 
 				/*int xxx = (int) ((atc.getInitXpointOnWindows() + 2 + atc.getX()) * BlockManager.blockRate);
 				int yyy = (int) ((atc.getY() + 2) * BlockManager.blockRate);
-				
+
 				int www = (int) ((trollySizeW - 1) * BlockManager.blockRate);
 				int hhh = (int) ((trollySizeH - 1) * BlockManager.blockRate);
 				g.fillRect(xxx, yyy, www, hhh);*/
@@ -68,10 +70,10 @@ public class SimViewATC extends SimViewObject{
 			/*if(atc.isLoad())
 			{
 				g.setColor(Color.BLUE);
-			
+
 				int xxx = (int) ((atc.getInitXpointOnWindows() + 2 + atc.getX()) * BlockManager.blockRate);
 				int yyy = (int) ((atc.getY() + 2) * BlockManager.blockRate);
-			
+
 				int www = (int) ((trollySizeW - 1) * BlockManager.blockRate);
 				int hhh = (int) ((trollySizeH - 1) * BlockManager.blockRate);
 				g.fillRect(xxx, yyy, www, hhh);

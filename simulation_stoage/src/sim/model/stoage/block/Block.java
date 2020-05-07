@@ -183,7 +183,7 @@ public class Block {
 		}
 	}
 
-	public Slot getSlot(int bay, int row, int tier)
+	public Slot getSlot(int bay, int row, int tier) throws ArrayIndexOutOfBoundsException
 	{
 		return block_slots[bay][row][tier];
 	}

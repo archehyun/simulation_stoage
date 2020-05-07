@@ -15,7 +15,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 	}
 
 	@Override
-	void moveDestination(SimEvent job) {
+	public void moveDestination(SimEvent job) {
 		do {
 			if (getDestination() > atc.getY()) {
 				atc.plusY();
@@ -42,7 +42,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 
 	}
 	@Override
-	void moveTP(SimEvent job) {
+	public void moveTP(SimEvent job) {
 
 		System.out.println("move1 tp:" + atc.getInitYpointOnWindows() + "," + atc.getY());
 		do {
@@ -55,7 +55,6 @@ public class ATCSeaSideMoveY extends ATCMove {
 			try {
 				Thread.sleep(atc.getSpeed());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -88,7 +87,6 @@ public class ATCSeaSideMoveY extends ATCMove {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			atc.setLoad(false);
@@ -96,7 +94,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
 			jobManager.release();
-			atc.workCount++;
+			atc.plusWorkCount();
 			break;
 		case StoageEvent.OUTBOUND:
 
@@ -104,7 +102,6 @@ public class ATCSeaSideMoveY extends ATCMove {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			atc.setLoad(true);
@@ -116,11 +113,10 @@ public class ATCSeaSideMoveY extends ATCMove {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			atc.setLoad(false);
-			atc.workCount++;
+			atc.plusWorkCount();
 			break;
 
 		default:

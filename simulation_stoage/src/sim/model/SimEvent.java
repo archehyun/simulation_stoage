@@ -5,7 +5,7 @@ import java.util.HashMap;
 import sim.queue.SimNode;
 
 /**
- * @author 諛�李쏀��
+ * @author archehyun
  *
  */
 public class SimEvent extends SimNode{
@@ -18,7 +18,7 @@ public class SimEvent extends SimNode{
 	public String simName;
 
 	/**
-	 * 占싱븝옙트 타占쏙옙
+	 *이벤트 타입
 	 */
 	public int eventType;
 

@@ -78,8 +78,12 @@ public class SimViewBlock extends SimViewObject{
 				xx = (int) ((initX + 2 + j * (BlockManager.conW + BlockManager.wGap)) * BlockManager.blockRate);
 				yy = (int) ((initY + 2 + 10 + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
 
-				g.drawString(count+"", xx ,yy );
+				g.drawString(count + "", xx - 5, yy);
 			}
+
+			g.setColor(Color.white);
+			yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
+			g.drawString(i + "", xx + 5, yy);
 		}
 
 		g.setColor(Color.white);
@@ -93,6 +97,7 @@ public class SimViewBlock extends SimViewObject{
 		yy = (int) ((initY + 10 + block.getBay() * (BlockManager.conH + BlockManager.hGap)) * BlockManager.blockRate);
 
 		float persent = (current/total)*100;
+
 		g.drawString((int) current + "/" + (int) total + "(" + (int) persent + "%)", xx, yy);
 
 

@@ -53,7 +53,7 @@ public class EquipTable extends JTable implements IFMonitor{
 		}
 
 		try {
-		model.update(li);
+			model.update(li);
 
 			tableChanged(new TableModelEvent(model));
 			repaint();
@@ -65,7 +65,6 @@ public class EquipTable extends JTable implements IFMonitor{
 
 			e.printStackTrace();
 
-			// TODO: handle exception
 		}
 
 

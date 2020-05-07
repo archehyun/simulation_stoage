@@ -1,21 +1,22 @@
 package sim.model.stoage.jobmanager;
 
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import sim.model.SimEvent;
 import sim.model.SimModelManager;
 import sim.model.stoage.atc.ATCJobManager;
 import sim.model.stoage.atc.StoageEvent;
+import sim.model.stoage.atc.crossover.CrossOverJobManager;
 import sim.model.stoage.block.BlockManager;
 import sim.model.stoage.block.Slot;
 import sim.queue.SimNode;
 
 /**
- * @author ï¿½ï¿½Ã¢ï¿½ï¿½
+ * @author archehyun
  *
  */
 public class JobManager extends SimModelManager{
-
 
 	WorkOrderGenerate generate;
 
@@ -27,7 +28,7 @@ public class JobManager extends SimModelManager{
 
 	boolean flag=false;
 
-	ATCJobManager atcManager = ATCJobManager.getInstance();
+	ATCJobManager atcManager = CrossOverJobManager.getInstance();
 
 	BlockManager blockManager = BlockManager.getInstance();
 
@@ -37,7 +38,6 @@ public class JobManager extends SimModelManager{
 		super(simName);
 		blockManager.setBlockCount(BlockManager.block);
 		generate = new WorkOrderGenerate();
-
 		this.simStart();
 
 	}
@@ -103,7 +103,6 @@ public class JobManager extends SimModelManager{
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -124,16 +123,16 @@ public class JobManager extends SimModelManager{
 			if (n > 3 && blockManager.getContainerCount(blockID) > 0) {
 				slot = blockManager.selectFilledUpperSlot(blockID);
 
-
 				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
+
 				node.eventType = StoageEvent.OUTBOUND;
+
 			} else {
 				slot = blockManager.selectEmptySlot(blockID);
 
-				//blockManager.setEmpty(blockID,slot, false);
-				//System.out.println(blockID+", insert:"+slot+","+blockManager.getContainerCount(blockID));
-				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
 				node.eventType = StoageEvent.INBOUND;
+
+				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
 			}
 
 			// slot null ¿À·ù ¹ß»ý
@@ -162,8 +161,6 @@ public class JobManager extends SimModelManager{
 			{
 				putOrder();
 				ready();
-
-
 			}
 
 		}
@@ -187,6 +184,99 @@ public class JobManager extends SimModelManager{
 		}
 
 	}
+
+	/**
+	 * 1. commandName : move(M), Work(W)
+	 * 2. I-O Type : I, O
+	 * 3. BAY : 0~25
+	 * 4. ROW : 1~4
+	 * 5. TIER : 1~6
+	 * EX : W-I-15-1-1
+	 * @param tf
+	 * @throws UnparserableCommandException
+	 */
+
+	String pattern = "^([M]|[W])-([I]|[O])-([1-9]{1}|[0-1]{1}[0-9]{1}|[2]{1}[0-5]{1})-([0-5]{1})-([0-5]{1})$";
+
+	StoageEvent commandNode;
+	public void putCommand(String command) throws UnparserableCommandException, ArrayIndexOutOfBoundsException {
+
+		Pattern.compile(command, Pattern.CASE_INSENSITIVE);
+
+
+		boolean bol = Pattern.matches(pattern, command);
+		if (bol == true) {
+
+			String commands[]=command.split("-");
+			String inOutType = commands[1];
+			int bay = Integer.parseInt(commands[2]);
+			int row = Integer.parseInt(commands[3]);
+			int tier = Integer.parseInt(commands[4]);
+
+			Slot slot;
+
+			for (int i = 0; i < BlockManager.block; i++) {
+				StoageEvent node = new StoageEvent(jobID);
+
+				slot = blockManager.getSlot(i, bay, row, tier);
+
+				notifyMonitor(Integer.toString(blockManager.getContainerCount(i)));
+
+				if (inOutType.equals("I")) {
+					node.eventType = StoageEvent.INBOUND;
+				} else {
+					node.eventType = StoageEvent.OUTBOUND;
+				}
+
+
+
+				// slot null ¿À·ù ¹ß»ý
+
+				try {
+					slot.setUsed(true);
+
+					node.setSlot(slot);
+
+					node.setX(row);
+
+					node.setY(bay);
+
+					System.out.println("input:" + node.getSlot().getBlockID());
+
+					atcManager.append(node);
+
+
+				} catch (NullPointerException e) {
+					System.err.println("error block:" + i);
+					e.printStackTrace();
+				}
+
+			}
+
+
+			/*if (n > 3 && blockManager.getContainerCount(blockID) > 0) {
+				slot = blockManager.getSlot(blockID, bay, row, tier);
+
+				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
+
+				node.eventType = StoageEvent.OUTBOUND;
+
+			} else {
+				slot = blockManager.getSlot(blockID, bay, row, tier);
+
+				node.eventType = StoageEvent.INBOUND;
+
+				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
+			}
+			*/
+
+
+		} else {
+			throw new UnparserableCommandException(command);
+		}
+
+	}
+
 
 
 }

@@ -4,15 +4,20 @@ import sim.model.SimEvent;
 import sim.model.SimModel;
 import sim.model.stoage.atc.move.ATCMove;
 import sim.model.stoage.jobmanager.JobManager;
-import sim.queue.SimNode;
 
 /**
- * @author 占쏙옙창占쏙옙
+ * @author archehyun
  *
  */
 public abstract class SimATC extends SimModel {
 
-	public int workCount;
+	public static int SEA_SIDE = 100;
+
+	public static int LAND_SIDE = 200;
+
+	protected ATCCommander commander;
+
+	private int workCount;
 
 	private int bay;
 
@@ -34,13 +39,13 @@ public abstract class SimATC extends SimModel {
 		return initYpointOnWindows;
 	}
 
-	ATCMove moveXX;
+	protected ATCMove moveXX;
 
-	ATCMove moveYY;
+	protected ATCMove moveYY;
 
-	int initX; // row 기준 위치
+	protected int initX; // row 기준 위치
 
-	int initY; // bay 기준 위치
+	protected int initY; // bay 기준 위치
 
 	protected int initXpointOnWindows = 0; // row 기준 초기 위치
 
@@ -50,7 +55,7 @@ public abstract class SimATC extends SimModel {
 
 	protected int currentYpointOnWindows = 0; // bay  기준 초기 위치
 
-	JobManager jobManager = JobManager.getInstance();
+	protected JobManager jobManager = JobManager.getInstance();
 
 	/**
 	 *
@@ -66,6 +71,9 @@ public abstract class SimATC extends SimModel {
 	}
 
 
+	/**
+	 *
+	 */
 	boolean isLoad=false;
 
 	public int getInitX() {
@@ -95,20 +103,25 @@ public abstract class SimATC extends SimModel {
 	private int speed=100;
 
 	/**
-	 *
+	 *atc idle 여부
 	 */
 	boolean isIdle=true;
 
 	/**
-	 * @return
+	 * @return isIdle
 	 */
 	public boolean isIdle() {
 		return isIdle;
 	}
 
-	public synchronized void arrival(int x, int y)
+	/**
+	 * @param x
+	 * @param y
+	 */
+	public synchronized void arrival(int currentXpointOnWindows, int currentYpointOnWindows)
 	{
-		if(currentXpointOnWindows ==x && currentYpointOnWindows==y) {
+		if (this.currentXpointOnWindows == currentXpointOnWindows && this.currentYpointOnWindows == currentYpointOnWindows) {
+
 
 			this.isIdle=true;
 
@@ -126,44 +139,40 @@ public abstract class SimATC extends SimModel {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
+	/**
+	 * @param simName
+	 * @param atcID
+	 */
 	public SimATC(String simName, int atcID) {
 		super(simName);
 		this.atcID =atcID;
 	}
 
-	@Override
-	public void process(SimNode node) {
 
-		SimEvent atcJob = (SimEvent) node;
-
-		moveXX.append(node);
-		moveYY.append(node);
-
-		setBusy();
-		StoageEvent event = (StoageEvent) atcJob;
-		notifyMonitor("loc:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
-
-		atcJob = null;
-
-
-	}
-
+	/**
+	 * plus currentXpointOnWindows
+	 */
 	public void plusX()
 	{
 		currentXpointOnWindows++;
 	}
 
+	/**
+	 * minus currentXpointOnWindows
+	 */
 	public void minusX()
 	{
 		currentXpointOnWindows--;
 	}
 
+	/**
+	 *
+	 */
 	public void plusY()
 	{
 		currentYpointOnWindows++;
@@ -195,21 +204,35 @@ public abstract class SimATC extends SimModel {
 		return currentXpointOnWindows;
 	}
 
+	/**
+	 *
+	 *
+	 *
+	 * @return currentYpointOnWindows
+	 */
 	public int getY() {
-		// TODO Auto-generated method stub
+
 		return currentYpointOnWindows;
 	}
 
+	/**
+	 * @return isLoad
+	 */
 	public boolean isLoad() {
-		// TODO Auto-generated method stub
 		return isLoad;
 	}
 
+	/**
+	 * @return speed
+	 */
 	public int getSpeed() {
-		// TODO Auto-generated method stub
+
 		return speed;
 	}
 
+	/**
+	 * @return workCount
+	 */
 	public int getWorkCount() {
 		return workCount;
 	}
@@ -222,6 +245,24 @@ public abstract class SimATC extends SimModel {
 	public void notifySimMessage(SimModel model) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void workTrolly() {
+		// TODO trolly work develep
+	}
+
+	/**
+	 * move to tp
+	 */
+	public abstract void moveTP(SimEvent job);
+
+	/**
+	 * move to destination
+	 */
+	public abstract void moveDestination(SimEvent job);
+
+	public void plusWorkCount() {
+		workCount++;
 	}
 
 }

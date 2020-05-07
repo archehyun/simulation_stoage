@@ -1,8 +1,6 @@
 package sim.model;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import sim.queue.SimNode;
 import sim.view.IFMonitor;
@@ -13,24 +11,15 @@ import sim.view.IFMonitor;
  */
 public abstract class SimModelManager extends SimModel{
 
-	/**
-	 * ½Ã¹Ä·¹ÀÌ¼Ç ¸ðµ¨ ¸®½ºÆ®
-	 */
-	protected List<SimModel> list;
+
 
 	protected SimNode node;
 
 	protected SimModelManager(String simName) {
 		super(simName);
-		list = new LinkedList<>();
 
 	}
 
-	public void addSimModel(SimModel model)
-	{
-		list.add(model);
-
-	}
 
 
 	@Override

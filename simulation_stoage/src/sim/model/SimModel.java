@@ -15,6 +15,14 @@ import sim.view.IFMonitor;
  */
 public abstract class SimModel implements IFSimModel, Runnable{
 
+	/**
+	 * 시뮬레이션 모델 리스트
+	 */
+	protected List<SimModel> list;
+
+	public void addSimModel(SimModel model) {
+		list.add(model);
+	}
 
 	/**
 	 * 모니터 리스트
@@ -59,21 +67,21 @@ public abstract class SimModel implements IFSimModel, Runnable{
 
 		this.flag = flag;
 	}
-	/**
-	 * 시뮬레이션 모델 리스트
-	 */
-	protected List<IFSimModel> list;
+
 
 	public SimModel(String simName)
 	{
 		this.setSimName(simName);
 		this.queue = new NomalQueue();
-		list = new LinkedList<IFSimModel>();
+		list = new LinkedList<SimModel>();
 		monitors = new LinkedList<>();
 
 	}
 
 
+	/* (non-Javadoc)
+	 * @see sim.model.IFSimModel#append(sim.queue.SimNode)
+	 */
 	@Override
 	public void append(SimNode node)
 	{
@@ -133,15 +141,22 @@ public abstract class SimModel implements IFSimModel, Runnable{
 
 	/**
 	 * @param node
+	 * @throws InterruptedException
 	 */
-	public abstract void process(SimNode node);
+	public abstract void process(SimNode node) throws InterruptedException;
 
 	@Override
 	public void run() {
 		while(isFlag())
 		{
 			SimNode node = queue.poll();
-			process(node);
+			try {
+				System.out.println("node:" + node);
+				process(node);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			notifySimMessage();
 		}
 	}

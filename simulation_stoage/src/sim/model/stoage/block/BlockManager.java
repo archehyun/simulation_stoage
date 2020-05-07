@@ -3,6 +3,10 @@ package sim.model.stoage.block;
 import sim.model.SimModelManager;
 import sim.queue.SimNode;
 
+/**
+ * @author archehyun
+ *
+ */
 public class BlockManager extends SimModelManager{
 
 	public static float blockRate = (float) 1.0;
@@ -120,6 +124,10 @@ public class BlockManager extends SimModelManager{
 	public int slotCount(int blockID, int bay,int row)
 	{
 		return blocks[blockID].slotCount(bay, row);
+	}
+
+	public Slot getSlot(int blockID, int bay, int row, int tier) throws ArrayIndexOutOfBoundsException {
+		return getBlock(blockID).getSlot(bay, row, tier);
 	}
 
 }

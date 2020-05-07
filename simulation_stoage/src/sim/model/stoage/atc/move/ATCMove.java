@@ -29,15 +29,14 @@ public abstract class ATCMove extends SimModel {
 		this.atc = atc;
 	}
 
-	abstract void moveTP(SimEvent job);
+	public abstract void moveTP(SimEvent job);
 
-	abstract void moveDestination(SimEvent job);
+	public abstract void moveDestination(SimEvent job);
 
 	@Override
 	public void notifySimMessage(SimModel model) {
 		// TODO Auto-generated method stub
 
 	}
-
 
 }
