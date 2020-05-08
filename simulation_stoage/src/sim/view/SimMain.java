@@ -74,15 +74,15 @@ public class SimMain {
 			SimATC atc2 = new LandSideATC("atc_land-" + i, i + SimATC.LAND_SIDE);
 			atc2.setInitLocation(0, 25);
 
-			atcManager.addSimModel(atc1);
-			atcManager.addSimModel(atc2);
+			atcManager2.addSimModel(atc1);
+			atcManager2.addSimModel(atc2);
 		}
 
 
 
-		atcManager.addMonitor(equipTable);
+		atcManager2.addMonitor(equipTable);
 
-		atcManager.addMonitor(txfArea);
+		atcManager2.addMonitor(txfArea);
 		jobManager.addMonitor(txfArea);
 	}
 
@@ -110,7 +110,7 @@ public class SimMain {
 			canvas.addDrawObject(new SimViewATC(atcID, i, x, BlockManager.magin));
 		}
 
-		atcManager.simStart();
+		atcManager2.simStart();
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class SimMain {
 		SimEvent event = new SimEvent(0);
 		event.setEventMessage("simstop");
 		jobManager.append(event);
-		atcManager.simStop();
+		atcManager2.simStop();
 	}
 
 	public SimMain() {
