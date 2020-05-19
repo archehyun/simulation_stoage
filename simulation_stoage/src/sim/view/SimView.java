@@ -12,7 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import sim.model.SimEvent;
+import sim.model.core.SimEvent;
+import sim.view.framework.IFMonitor;
 
 public class SimView extends JPanel implements IFMonitor{
 	
