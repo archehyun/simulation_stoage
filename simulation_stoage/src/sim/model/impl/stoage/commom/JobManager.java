@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import sim.model.core.SimEvent;
 import sim.model.core.SimModelManager;
 import sim.model.impl.stoage.atc.ATCJobManager;
+import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
 import sim.model.queue.SimNode;
 
@@ -94,24 +95,32 @@ public class JobManager extends SimModelManager{
 		public synchronized void release()
 		{
 			ready = flag;
+			activeOrderCount--;
+			System.out.println("release");
+
 			notify();
 		}
 
+		int activeOrderCount = 0;
 		public synchronized void ready()
 		{
-			ready =false;
-			while(atcManager.getBusyCount()==atcManager.getATCCount())
+			ready = false;
+			while (activeOrderCount == 2)
 			{
 				try {
+
+					System.out.println("ready");
 					wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+
+
 		}
 
 		/**
-		 * ÁÖ¹® »ý¼º
+		 * ï¿½Ö¹ï¿½ ï¿½ï¿½ï¿½ï¿½
 		 * @throws Exception
 		 */
 		public void putOrder() throws Exception {
@@ -141,7 +150,7 @@ public class JobManager extends SimModelManager{
 				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
 			}
 
-			// slot null ¿À·ù ¹ß»ý
+			// slot null ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½
 
 			try {
 				slot.setUsed(true);
@@ -153,12 +162,13 @@ public class JobManager extends SimModelManager{
 
 				atcManager.append(node);
 
+				activeOrderCount++;
+
 				jobID++;
 			} catch (NullPointerException e) {
 				System.err.println("error block:" + blockID);
 				e.printStackTrace();
 			}
-
 		}
 
 		@Override
@@ -166,12 +176,14 @@ public class JobManager extends SimModelManager{
 			while(flag)
 			{
 				try {
+					ready();
 					putOrder();
+
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				ready();
+
 			}
 
 		}
@@ -214,11 +226,12 @@ public class JobManager extends SimModelManager{
 
 		Pattern.compile(command, Pattern.CASE_INSENSITIVE);
 
-
 		boolean bol = Pattern.matches(pattern, command);
 		if (bol == true) {
 
 			String commands[]=command.split("-");
+
+			String commandStr = commands[0];
 			String inOutType = commands[1];
 			int bay = Integer.parseInt(commands[2]);
 			int row = Integer.parseInt(commands[3]);
@@ -226,65 +239,71 @@ public class JobManager extends SimModelManager{
 
 			Slot slot;
 
-			for (int i = 0; i < BlockManager.block; i++) {
-				StoageEvent node = new StoageEvent(jobID, SimEvent.ORDER);
+			if (commandStr.equals("W")) {
 
-				slot = blockManager.getSlot(i, bay, row, tier);
-				try {
-				int containerCount = blockManager.getContainerCount(i);
-				notifyMonitor(Integer.toString(containerCount));
+				for (int i = 0; i < BlockManager.block; i++) {
+					StoageEvent node = new StoageEvent(jobID, SimEvent.ORDER);
+
+					slot = blockManager.getSlot(i, bay, row, tier);
+					try {
+						int containerCount = blockManager.getContainerCount(i);
+						notifyMonitor(Integer.toString(containerCount));
+
+						if (inOutType.equals("I")) {
+							node.orderType = StoageEvent.INBOUND;
+						} else {
+							node.orderType = StoageEvent.OUTBOUND;
+						}
+					} catch (Exception e) {
+						System.err.println(e.getMessage());
+						continue;
+					}
+
+					// slot null ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½
+
+					try {
+						slot.setUsed(true);
+
+						node.setSlot(slot);
+
+						node.setX(row);
+
+						node.setY(bay);
+
+
+						//	System.out.println("input:" + node.getSlot().getBlockID());
+
+						atcManager.append(node);
+
+
+					} catch (NullPointerException e) {
+						System.err.println("error block:" + i);
+						e.printStackTrace();
+					}
+
+				}
+
+			} else if (commandStr.equals("M")) {
+				System.out.println("Move");
+				StoageEvent node = new StoageEvent(jobID, SimEvent.COMMAND);
+				slot = blockManager.getSlot(0, bay, row, tier);
+
+				System.out.println("slot:" + slot);
+				node.setSlot(slot);
+				node.setCommandType(SimEvent.COMMAND_MOVE);
 
 				if (inOutType.equals("I")) {
-					node.orderType = StoageEvent.INBOUND;
+					node.setATCID(SimATC.LAND_SIDE);
 				} else {
-					node.orderType = StoageEvent.OUTBOUND;
-				}
-				} catch (Exception e) {
-					System.err.println(e.getMessage());
-					continue;
+					node.setATCID(SimATC.SEA_SIDE);
 				}
 
+				node.setX(row);
 
-
-				// slot null ¿À·ù ¹ß»ý
-
-				try {
-					slot.setUsed(true);
-
-					node.setSlot(slot);
-
-					node.setX(row);
-
-					node.setY(bay);
-
-					//	System.out.println("input:" + node.getSlot().getBlockID());
-
-					atcManager.append(node);
-
-
-				} catch (NullPointerException e) {
-					System.err.println("error block:" + i);
-					e.printStackTrace();
-				}
+				node.setY(bay);
+				atcManager.append(node);
 
 			}
-
-
-			/*if (n > 3 && blockManager.getContainerCount(blockID) > 0) {
-				slot = blockManager.getSlot(blockID, bay, row, tier);
-
-				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
-
-				node.eventType = StoageEvent.OUTBOUND;
-
-			} else {
-				slot = blockManager.getSlot(blockID, bay, row, tier);
-
-				node.eventType = StoageEvent.INBOUND;
-
-				notifyMonitor(Integer.toString(blockManager.getContainerCount(blockID)));
-			}
-			*/
 
 
 		} else {

@@ -92,17 +92,28 @@ public abstract class ATCJobManager extends SimModelManager {
 		return list.size();
 	}
 
-	public boolean overlapRectangles(SimATC atc) {
+	public synchronized boolean overlapRectangles(SimATC atc) {
 		Iterator<SimModel> iter = list.iterator();
 
+
 		while (iter.hasNext()) {
-			iter.next();
-			if (atc.overlapRectangles(atc.bounds)) {
+			SimATC ONE = (SimATC) iter.next();
+			if (ONE.getAtcID() != atc.getAtcID() && ONE.overlapRectangles(atc.bounds)) {
 				return true;
 			}
-
 		}
+
 		return false;
+	}
+
+	public synchronized void setMove(boolean b) {
+		Iterator<SimModel> iter = list.iterator();
+		while (iter.hasNext()) {
+			SimATC ONE = (SimATC) iter.next();
+			ONE.setMove(b);
+		}
+		notifyAll();
+
 	}
 
 }

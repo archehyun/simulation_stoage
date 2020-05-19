@@ -3,7 +3,7 @@ package sim.view.framework;
 import sim.view.Vector2;
 
 /**
- * »ç°¢Çü °æ°è Ç¥Çö Å¬·¡½º
+ * ï¿½ç°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
  *
  * @author LDCC
  *
@@ -17,6 +17,11 @@ public class Rectangle {
 		this.lowerLeft = new Vector2(x, y);
 		this.width = width;
 		this.height = height;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + lowerLeft.x + "," + lowerLeft.y + "," + width + "," + height + "]";
 	}
 
 }

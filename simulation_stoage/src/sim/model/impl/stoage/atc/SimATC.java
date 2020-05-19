@@ -15,13 +15,13 @@ import sim.view.framework.Rectangle;
  */
 public abstract class SimATC extends SimModel {
 
-	//°´Ã¼ À§Ä¡
+	//ï¿½ï¿½Ã¼ ï¿½ï¿½Ä¡
 	public final Vector2 position;
 
-	//°´Ã¼ À§Ä¡
+	//ï¿½ï¿½Ã¼ ï¿½ï¿½Ä¡
 	public final Vector2 initPosition = new Vector2();
 
-	// °´Ã¼ °æ°è
+	// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½
 	public final Rectangle bounds;
 
 	public final Vector2 velocity;
@@ -34,7 +34,7 @@ public abstract class SimATC extends SimModel {
 
 	private int blockID;
 
-	BlockManager blockManager = BlockManager.getInstance();
+	public BlockManager blockManager = BlockManager.getInstance();
 
 	public static int SEA_SIDE = 100;
 
@@ -81,23 +81,23 @@ public abstract class SimATC extends SimModel {
 
 	protected ATCMove moveYY;
 
-	protected int initX; // row ±âÁØ À§Ä¡
+	protected int initX; // row ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 
-	protected int initY; // bay ±âÁØ À§Ä¡
+	protected int initY; // bay ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 
-	//protected int initXpointOnWindows = 0; // row ±âÁØ ÃÊ±â À§Ä¡
+	//protected int initXpointOnWindows = 0; // row ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡
 
-	//protected int initYpointOnWindows = 0; // bay  ±âÁØ ÃÊ±â À§Ä¡
+	//protected int initYpointOnWindows = 0; // bay  ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡
 
-	//protected int currentXpointOnWindows = 0; // row ±âÁØ ÃÊ±â À§Ä¡
+	//protected int currentXpointOnWindows = 0; // row ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡
 
-	//protected int currentYpointOnWindows = 0; // bay  ±âÁØ ÃÊ±â À§Ä¡
+	//protected int currentYpointOnWindows = 0; // bay  ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡
 
 	protected JobManager jobManager = JobManager.getInstance();
 
 	/**
 	 *
-	 * atc bay, row ±âÁØ À§Ä¡ ¼³Á¤
+	 * atc bay, row initation
 	 *
 	 * @param initX
 	 * @param initY
@@ -115,8 +115,12 @@ public abstract class SimATC extends SimModel {
 	 */
 	boolean isLoad=false;
 
-	public int getInitX() {
+	public int getInitRow() {
 		return initX;
+	}
+
+	public int getInitX() {
+		return (int) initPosition.x;
 	}
 
 	public void setInitX(float initX) {
@@ -140,14 +144,17 @@ public abstract class SimATC extends SimModel {
 		return atcID;
 	}
 
+	/**
+	 * atc speed
+	 */
 	private int speed;
 
 	/**
-	 * idle ¿©ºÎ
+	 * idle state
 	 */
 	boolean isIdle=true;
 
-	private int deltaTime = 1;
+	protected int deltaTime = 1;
 
 	/**
 	 * @return isIdle
@@ -191,8 +198,10 @@ public abstract class SimATC extends SimModel {
 		}
 	}
 
-
-
+	public synchronized void setMove(boolean move) {
+		this.isMove = true;
+		notify();
+	}
 
 	public SimATC(String simName, int atcID, int blockID, float row, float bay, float width, float height) {
 		super(simName);
@@ -201,16 +210,18 @@ public abstract class SimATC extends SimModel {
 
 		this.setInitBlockLocation(row, bay);
 
-		this.position = new Vector2(getInitX() * BlockManager.hGap,
+		this.initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
+		this.initPosition.y = getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin - BlockManager.conH;
+
+		this.position = new Vector2(getInitRow() * BlockManager.hGap + initPosition.x,
 
 				getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH);
 
-
 		this.bounds = new Rectangle((int) (position.x - width / 2), (int) (position.y - height / 2), (int) width, (int) height);
 
+
+
 		velocity = new Vector2(1, 1);
-
-
 
 	}
 
@@ -222,7 +233,6 @@ public abstract class SimATC extends SimModel {
 	{
 		position.add(velocity.x, 0);
 		bounds.lowerLeft.add(velocity.x, 0);
-		//currentXpointOnWindows++;
 	}
 
 	/**
@@ -232,7 +242,6 @@ public abstract class SimATC extends SimModel {
 	{
 		position.sub(velocity.x, 0);
 		bounds.lowerLeft.sub(velocity.x, 0);
-		//currentXpointOnWindows--;
 	}
 
 	/**
@@ -241,24 +250,6 @@ public abstract class SimATC extends SimModel {
 	 */
 	public void plusY() throws InterruptedException
 	{
-
-		// ´ÙÀ½ ÀÚ¸® »óÅÂ È®ÀÎ
-
-		/*
-		 * case  ÀÛ¾÷ ÁßÀÎ °æ¿ì
-		 * case
-		 */
-		// ÀÚ¸®°¡ »ý±æ¶§±îÁö ´ë±â
-
-		// ATC ÀÌµ¿
-
-		while (!isMove) {
-			wait();
-		}
-		if (atcJobManager.overlapRectangles(this)) {
-			System.out.println("Ãæµ¹");
-		} else {
-		}
 		position.add(0, velocity.y);
 		bounds.lowerLeft.add(0, this.velocity.y * deltaTime);
 	}
@@ -267,18 +258,8 @@ public abstract class SimATC extends SimModel {
 	 * @throws InterruptedException
 	 *
 	 */
-	public void minusY() throws InterruptedException
-	{
-		while (!isMove) {
-			wait();
-		}
-		if (atcJobManager.overlapRectangles(this)) {
-			System.out.println("Ãæµ¹");
-		}
-		else {
+	public void minusY() throws InterruptedException {
 
-		}
-		//currentYpointOnWindows--;
 		position.sub(0, velocity.y);
 		bounds.lowerLeft.sub(0, this.velocity.y * deltaTime);
 	}
@@ -304,7 +285,7 @@ public abstract class SimATC extends SimModel {
 	 */
 	public int getX() {
 		// TODO Auto-generated method stub
-		return (int) this.position.x;
+		return (int) (this.position.x);
 	}
 
 	/**
@@ -392,6 +373,8 @@ public abstract class SimATC extends SimModel {
 	}
 
 	public boolean overlapRectangles(Rectangle r2) {
+
+
 		if (bounds.lowerLeft.x < r2.lowerLeft.x + r2.width && bounds.lowerLeft.x + bounds.width > r2.lowerLeft.x && bounds.lowerLeft.y < r2.lowerLeft.y + r2.height && bounds.lowerLeft.y + bounds.height > r2.lowerLeft.y)
 			return true;
 		else

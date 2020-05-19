@@ -11,6 +11,8 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import map.cavas.DrawObject;
+import sim.model.impl.stoage.atc.crossover.CrossATCLandSide;
+import sim.model.impl.stoage.atc.crossover.CrossATCSeaSide;
 import sim.model.impl.stoage.atc.twin.TwinLandSideATC;
 import sim.model.impl.stoage.atc.twin.TwinSeaSideATC;
 import sim.model.impl.stoage.commom.Block;
@@ -63,8 +65,6 @@ public class SimCanvas extends Canvas implements Runnable {
 	}
 
 	public synchronized void render() {
-
-
 
 		frames++;
 		BufferStrategy bs = getBufferStrategy();
@@ -178,18 +178,26 @@ public class SimCanvas extends Canvas implements Runnable {
 
 	public void addObject(Object obj) {
 		if (obj instanceof TwinSeaSideATC) {
-			System.out.println("act add");
 
 			TwinSeaSideATC atc = (TwinSeaSideATC) obj;
 			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
 
 		} else if (obj instanceof TwinLandSideATC) {
-			System.out.println("land atc add");
 			TwinLandSideATC atc = (TwinLandSideATC) obj;
 			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
 		}
+
+		else if (obj instanceof CrossATCLandSide) {
+
+			CrossATCLandSide atc = (CrossATCLandSide) obj;
+			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
+
+		} else if (obj instanceof CrossATCSeaSide) {
+
+			CrossATCSeaSide atc = (CrossATCSeaSide) obj;
+			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
+		}
 		else if (obj instanceof Block) {
-			System.out.println("block add");
 			Block block = (Block) obj;
 			this.addDrawObject(new SimViewBlock(block.getBlockID(), block.getX(), block.getY()));
 		}

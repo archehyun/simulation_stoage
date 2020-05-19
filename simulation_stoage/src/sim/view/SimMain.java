@@ -3,10 +3,9 @@ package sim.view;
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
+import sim.model.impl.stoage.atc.crossover.CrossATCLandSide;
+import sim.model.impl.stoage.atc.crossover.CrossATCSeaSide;
 import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
-import sim.model.impl.stoage.atc.twin.TwinJobManager;
-import sim.model.impl.stoage.atc.twin.TwinLandSideATC;
-import sim.model.impl.stoage.atc.twin.TwinSeaSideATC;
 import sim.model.impl.stoage.commom.Block;
 import sim.model.impl.stoage.commom.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
@@ -33,7 +32,7 @@ public class SimMain {
 
 	ATCJobManager atcManager1 = CrossOverJobManager.getInstance();
 
-	ATCJobManager atcManager2 = TwinJobManager.getInstance();
+	//ATCJobManager atcManager2 = TwinJobManager.getInstance();
 
 	JobManager jobManager = JobManager.getInstance();
 
@@ -56,11 +55,11 @@ public class SimMain {
 
 		// ATC Init
 		for (int blockID = 0; blockID < BlockManager.block; blockID++) {
-			SimATC atc1 = new TwinSeaSideATC("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, 0, 0);
+			SimATC atc1 = new CrossATCSeaSide("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
 			atc1.setInitBlockLocation(0, 0);
 			atc1.setSpeed(ATCJobManager.SPEED);
 
-			SimATC atc2 = new TwinLandSideATC("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, 0, 0);
+			SimATC atc2 = new CrossATCLandSide("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
 			atc2.setInitBlockLocation(0, 25);
 			atc2.setSpeed(ATCJobManager.SPEED);
 

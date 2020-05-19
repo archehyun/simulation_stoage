@@ -13,7 +13,7 @@ import sim.view.framework.SimViewObject;
 
 /**
  *
- * ATC Ç¥½Ã ÀÌ¹ÌÁö °´Ã¼
+ * ATC Ç¥ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
  *
  * @author LDCC
  *
@@ -26,18 +26,18 @@ public class SimViewATC extends SimViewObject {
 
 	int row=6;
 
-	//	Æ®·Ñ¸® »çÀÌÁî
+	//	Æ®ï¿½Ñ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int trollySizeW, trollySizeH ;
 
-	// ATC »çÀÌÁî
+	// ATC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int atcW, atcH;
 
-	// Ç¥½Ã »çÀÌÁî
+	// Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int xx, yy, ww, hh;
 
 
 	/**
-	 * »ý¼ºÀÚ
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 *
 	 * @param atcID
 	 * @param blockID
@@ -51,6 +51,8 @@ public class SimViewATC extends SimViewObject {
 		super(atcID, x, y, width, height);
 
 		atc = manager.getATC(atcID);
+
+		System.out.println(atc);
 
 		atc.updateInitLocationOnWinddows(blockID);
 
@@ -66,7 +68,7 @@ public class SimViewATC extends SimViewObject {
 
 		if(atc!=null)
 		{
-			// ·Îµå ¿©ºÎ Ç¥½Ã
+			// ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
 
 			if (atc.isLoad()) {
 				g.setColor(Color.BLUE);
@@ -81,7 +83,7 @@ public class SimViewATC extends SimViewObject {
 				g.setColor(Color.ORANGE);
 			}
 
-			int xx = (int) ((atc.getInitXpointOnWindows() + atc.getX()) * BlockManager.blockRate);
+			int xx = (int) ((atc.getX()) * BlockManager.blockRate);
 			int yy = (int) ((atc.getY() - 1) * BlockManager.blockRate);
 
 			int ww = (int) (trollySizeW * BlockManager.blockRate);

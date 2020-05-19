@@ -1,6 +1,8 @@
 package sim.model.impl.stoage.atc.twin;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
@@ -24,16 +26,37 @@ public class TwinJobManager extends ATCJobManager {
 	}
 
 	private void commandProcess(SimEvent event) {
+
+		Iterator<SimModel> iter = list.iterator();
+
 		switch (event.getCommandType()) {
 		case SimEvent.COMMAND_UPDATE_SPEED:
 			int speed = (int) event.get("speed");
 
 			System.out.println("update speed:" + speed);
-			Iterator<SimModel> iter = list.iterator();
 
 			while (iter.hasNext()) {
 				SimATC model = (SimATC) iter.next();
 				model.setSpeed(speed);
+			}
+			break;
+		case SimEvent.COMMAND_MOVE:
+
+			while (iter.hasNext()) {
+				SimATC model = (SimATC) iter.next();
+
+				StoageEvent ee = (StoageEvent) event;
+
+				int blockId = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+
+				if ((model.getAtcID() % 100) == blockId) {
+
+					if (model.getAtcID() == ee.getATCID()) {
+						ee.orderType = StoageEvent.MOVE;
+						model.append(ee);
+						logger.debug("append atc order:" + atcJob.getSimName());
+					}
+				}
 			}
 			break;
 
@@ -42,30 +65,21 @@ public class TwinJobManager extends ATCJobManager {
 		}
 
 	}
+	//SimEvent atcJob;
 
-	private void orderProcess(SimEvent atcJob) {
-		//	atcJob = (SimEvent) node;
-
-		//	System.out.println("command:" + ((StoageEvent) atcJob).getSlot().getBlockID());
-
-		atcJob.add("atc", list);
-
+	private void divied(int blockID, SimEvent atcJob) {
 		Iterator<SimModel> iter = list.iterator();
-
 
 		while (iter.hasNext()) {
 			SimATC model = (SimATC) iter.next();
 
-			int blockId = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
-
-
-			if ((model.getAtcID() % 100) == blockId) {
+			if ((model.getAtcID() % 100) == blockID) {
 
 				if (model.getAtcID() / 100 == 1) {
 					if (((StoageEvent) atcJob).getSlot().getBayIndex() < 12) {
 
 						model.append(atcJob);
-						//System.out.println("work atc:" + model.getSimName());
+
 						break;
 					}
 				} else {
@@ -77,12 +91,51 @@ public class TwinJobManager extends ATCJobManager {
 				}
 			}
 		}
+	}
+
+	public void minWorkACT(int blockID, SimEvent atcJob) {
+
+		Iterator<SimModel> iter = list.iterator();
+
+		List<SimATC> li = new LinkedList<SimATC>();
+
+		while (iter.hasNext()) {
+			SimATC model = (SimATC) iter.next();
+			if ((model.getAtcID() % 100) == blockID) {
+				li.add(model);
+			}
+		}
+
+		SimATC first = li.get(0);
+		for (int i = 1; i < li.size(); i++) {
+			SimATC temp = li.get(i);
+			if (first.getWorkCount() > temp.getWorkCount()) {
+				first = temp;
+			}
+		}
+
+		first.append(atcJob);
+	}
+
+	private void orderProcess(SimEvent atcJob) {
+		//	atcJob = (SimEvent) node;
+
+
+
+		atcJob.add("atc", list);
+
+
+
+		int blockID = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+		//divied(blockID, atcJob);
+		minWorkACT(blockID, atcJob);
 
 		if (atcJob == null)
 			System.err.println("error");
 		this.notifyMonitor(atcJob);
 
 	}
+
 
 	SimEvent atcJob;
 

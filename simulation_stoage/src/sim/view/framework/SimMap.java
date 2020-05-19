@@ -7,6 +7,10 @@ import java.util.Iterator;
 import map.cavas.DefaultCanvas;
 import map.cavas.DrawObject;
 
+/**
+ * @author archehyun
+ *
+ */
 public class SimMap extends DefaultCanvas implements Runnable{
 
 	Thread renderingThread;

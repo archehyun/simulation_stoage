@@ -12,8 +12,8 @@ import sim.model.queue.SimNode;
  */
 public class ATCMoveX extends ATCMove {
 
-	
-	
+
+
 
 	public ATCMoveX(String simName, SimATC atc) {
 		super(simName, atc);
@@ -21,6 +21,7 @@ public class ATCMoveX extends ATCMove {
 	}
 
 
+	@Override
 	public void notifySimMessage() {
 		atc.arrival(atc.getX(), atc.getY());
 	}
@@ -50,6 +51,7 @@ public class ATCMoveX extends ATCMove {
 			if (getDestination() > atc.getX()) {
 				atc.plusX();
 			} else if (getDestination() < atc.getX()) {
+
 				atc.minusX();
 			}
 			try {
@@ -67,7 +69,7 @@ public class ATCMoveX extends ATCMove {
 	public void process(SimNode node) {
 		StoageEvent job = (StoageEvent) node;
 
-		setDestination((BlockManager.conW + BlockManager.wGap) * job.getX());
+		setDestination((BlockManager.conW + BlockManager.wGap) * job.getX() + atc.getInitXpointOnWindows());
 
 		moveDestination(job);
 	}

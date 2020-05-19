@@ -84,45 +84,42 @@ public class ATCSeaSideMoveY extends ATCMove {
 			atc.setLoad(true);
 			moveDestination(job);
 
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			workHoist();
 			atc.setLoad(false);
 			job.getSlot().setUsed(false);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
 			jobManager.release();
-			atc.plusWorkCount();
 			break;
 		case StoageEvent.OUTBOUND:
 
 			moveDestination(job);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			workHoist();
 			atc.setLoad(true);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
 			jobManager.release();
 			moveTP(job);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			workHoist();
 			atc.setLoad(false);
-			atc.plusWorkCount();
+			break;
+		case StoageEvent.MOVE:
+			moveDestination(job);
 			break;
 
 		default:
 			break;
 		}
 
+	}
+
+	private void workHoist() {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

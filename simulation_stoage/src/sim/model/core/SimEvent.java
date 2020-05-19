@@ -31,6 +31,8 @@ public class SimEvent extends SimNode{
 
 	public static final int COMMAND_UPDATE_SPEED = 1;
 
+	public static final int COMMAND_MOVE = 2;
+
 	HashMap<String, Object> map;
 
 	/**

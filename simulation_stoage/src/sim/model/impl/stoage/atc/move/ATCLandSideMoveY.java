@@ -80,7 +80,6 @@ public class ATCLandSideMoveY extends ATCMove {
 	@Override
 	public void process(SimNode node) throws InterruptedException {
 		StoageEvent job = (StoageEvent) node;
-
 		setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
 
 		switch (job.orderType) {
@@ -123,7 +122,10 @@ public class ATCLandSideMoveY extends ATCMove {
 			atc.setLoad(false);
 			atc.plusWorkCount();
 			break;
-
+		case StoageEvent.MOVE:
+			System.out.println("order tye");
+			moveDestination(job);
+			break;
 		default:
 			break;
 		}

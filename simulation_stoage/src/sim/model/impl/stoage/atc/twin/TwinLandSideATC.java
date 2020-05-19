@@ -1,6 +1,7 @@
 package sim.model.impl.stoage.atc.twin;
 
 import sim.model.core.SimEvent;
+import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCLandSideMoveY;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
@@ -10,11 +11,12 @@ import sim.model.queue.SimNode;
 
 public class TwinLandSideATC extends SimATC {
 
+	ATCJobManager atcManager1 = TwinJobManager.getInstance();
+
 	public TwinLandSideATC(String simName, int atcID, int blockID, float x, float y, float width, float height) {
 		super(simName, atcID, blockID, x, y, width, height);
 		moveXX = new ATCMoveX(simName + "_x", this);
 		moveYY = new ATCLandSideMoveY(simName + "_y", this);
-		System.out.println("create landatc:" + atcID);
 
 		notifyMonitor("create landSide atc:" + atcID);
 
@@ -29,6 +31,7 @@ public class TwinLandSideATC extends SimATC {
 
 	}
 
+
 	@Override
 	public void notifySimMessage() {
 		// TODO Auto-generated method stub
@@ -39,6 +42,30 @@ public class TwinLandSideATC extends SimATC {
 	public void moveTP(SimEvent job) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @throws InterruptedException
+	 *
+	 */
+	@Override
+	public synchronized void plusY() throws InterruptedException {
+
+		atcManager1.overlapRectangles(this);
+
+		super.plusY();
+	}
+
+	/**
+	 * @throws InterruptedException
+	 *
+	 */
+	@Override
+	public synchronized void minusY() throws InterruptedException {
+
+		atcManager1.overlapRectangles(this);
+
+		super.minusY();
 	}
 
 	@Override
@@ -52,23 +79,25 @@ public class TwinLandSideATC extends SimATC {
 
 		SimEvent atcJob = (SimEvent) node;
 
+		StoageEvent event = (StoageEvent) atcJob;
+		System.out.println("process:" + event.orderType);
 		moveXX.append(node);
 
 		moveYY.append(node);
 
 		setBusy();
 
-		StoageEvent event = (StoageEvent) atcJob;
+
 
 		notifyMonitor("land:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
 
 		atcJob = null;
 	}
 
-	//TODO : SINGLE ATC ±³Â÷
-	//TODO : TWIN ATC ±³Â÷
-	//TODO : CROSS ATC ±³Â÷
-	//TODO : Åë°è
+	//TODO : SINGLE ATC ï¿½ï¿½ï¿½ï¿½
+	//TODO : TWIN ATC ï¿½ï¿½ï¿½ï¿½
+	//TODO : CROSS ATC ï¿½ï¿½ï¿½ï¿½
+	//TODO : ï¿½ï¿½ï¿½
 
 
 

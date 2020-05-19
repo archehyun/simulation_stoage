@@ -8,6 +8,8 @@ public class StoageEvent extends SimEvent{
 
 	public static final int OUTBOUND=1;
 
+	public static final int MOVE = 2;
+
 
 	public int orderType;
 
@@ -17,9 +19,26 @@ public class StoageEvent extends SimEvent{
 
 	private int atcID;
 
-	/**
-	 *À§Ä¡
-	 */
+	private int bay;
+
+	public int getBay() {
+		return bay;
+	}
+
+	public void setBay(int bay) {
+		this.bay = bay;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	private int row;
+
 	private int x,y;
 
 	public int getX() {

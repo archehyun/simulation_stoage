@@ -77,7 +77,7 @@ public class SimFrame extends JFrame implements ActionListener {
 		simMain.setCanvas(canvas);
 		simMain.init();
 
-		this.setTitle("¿Âƒ°¿Â Ω√πƒ∑π¿Ã≈Õ");
+		this.setTitle("Stoage Simualtion");
 		JPanel pnMain = new JPanel(new BorderLayout());
 		txfArea = new SimView();
 
@@ -189,6 +189,12 @@ public class SimFrame extends JFrame implements ActionListener {
 					//System.out.println(tf.getText() + ":enter");
 
 					try {
+						if (tf.getText().equals("?")) {
+							tf.setText("W-I-15-1-1");
+							return;
+						} else {
+
+						}
 						simMain.putCommand(tf.getText());
 					} catch (UnparserableCommandException e1) {
 						JOptionPane.showMessageDialog(SimFrame.this, "command error");
@@ -411,7 +417,8 @@ public class SimFrame extends JFrame implements ActionListener {
 				} catch (NumberFormatException ee) {
 					txfATCSpeed.setText(String.valueOf(ATCJobManager.SPEED));
 
-					JOptionPane.showMessageDialog(this, "º˝¿⁄∏∏ ¿‘∑¬ «œΩ Ω√ø‰");
+					JOptionPane.showMessageDialog(this, "Only Integer");
+					//ÌïúÍ∏Ä Íπ®Ïßê
 				}
 
 

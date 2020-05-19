@@ -2,16 +2,18 @@ package sim.model.core;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import sim.model.queue.SimNode;
 import sim.view.framework.IFMonitor;
 
 /**
- * @author ¹ÚÃ¢Çö
+ * @author ï¿½ï¿½Ã¢ï¿½ï¿½
  *
  */
 public abstract class SimModelManager extends SimModel{
 
-
+	protected Logger logger = Logger.getLogger(this.getClass().getName());
 
 	protected SimNode node;
 
@@ -40,8 +42,8 @@ public abstract class SimModelManager extends SimModel{
 	}
 
 	/*
-	 * ½Ã¹Ä·¹ÀÌ¼Ç ½ÃÀÛ
-	 * ÇÏÀ§ ¸ðµâ ½ÃÀÛ
+	 * ï¿½Ã¹Ä·ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 *
 	 */
 	@Override
@@ -56,7 +58,7 @@ public abstract class SimModelManager extends SimModel{
 		}
 	}
 	/**
-	 *  ½Ã¹Ä·¹ÀÌ¼Ç Á¾·á
+	 *  ï¿½Ã¹Ä·ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 */
 	@Override
 	public void simStop()

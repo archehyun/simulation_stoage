@@ -35,28 +35,49 @@ public class CrossOverJobManager extends ATCJobManager {
 	 * @param event
 	 */
 	private void commandProcess(SimEvent event) {
+
+		Iterator<SimModel> iter = list.iterator();
+
 		switch (event.getCommandType()) {
 		case SimEvent.COMMAND_UPDATE_SPEED:
 			int speed = (int) event.get("speed");
-
-			Iterator<SimModel> iter = list.iterator();
 
 			while (iter.hasNext()) {
 				SimATC model = (SimATC) iter.next();
 				model.setSpeed(speed);
 			}
 			break;
+		case SimEvent.COMMAND_MOVE:
+
+			while (iter.hasNext()) {
+				SimATC model = (SimATC) iter.next();
+
+				StoageEvent ee = (StoageEvent) event;
+
+				ee.orderType = StoageEvent.MOVE;
+				int blockId = ((StoageEvent) event).getSlot().getBlock().getBlockID();
+
+
+				if ((model.getAtcID() % 100) == blockId) {
+
+					if (model.getAtcID() == ee.getATCID()) {
+
+						model.append(ee);
+						logger.debug("append atc order:" + event.getSimName());
+					}
+				}
+			}
+			break;
 
 		default:
 			break;
 		}
-
 	}
 
 	private void orderProcess(SimEvent atcJob) {
 		//	atcJob = (SimEvent) node;
 
-		//	System.out.println("command:" + ((StoageEvent) atcJob).getSlot().getBlockID());
+
 
 		atcJob.add("atc", list);
 
@@ -72,7 +93,7 @@ public class CrossOverJobManager extends ATCJobManager {
 
 	}
 
-	SimEvent atcJob;
+	//SimEvent atcJob;
 
 	private void divied(int blockID, SimEvent atcJob) {
 		Iterator<SimModel> iter = list.iterator();
@@ -86,7 +107,7 @@ public class CrossOverJobManager extends ATCJobManager {
 					if (((StoageEvent) atcJob).getSlot().getBayIndex() < 12) {
 
 						model.append(atcJob);
-						//System.out.println("work atc:" + model.getSimName());
+
 						break;
 					}
 				} else {
@@ -107,6 +128,7 @@ public class CrossOverJobManager extends ATCJobManager {
 		//		this.node = node;
 
 		SimEvent event = (SimEvent) node;
+
 		switch (event.getEventType()) {
 
 		case SimEvent.COMMAND:
@@ -122,10 +144,7 @@ public class CrossOverJobManager extends ATCJobManager {
 
 	}
 
-	public boolean detectCollision(SimATC atc) {
 
-		return true;
-	}
 
 	public void minWorkACT(int blockID, SimEvent atcJob) {
 
@@ -148,7 +167,7 @@ public class CrossOverJobManager extends ATCJobManager {
 				first = temp;
 			}
 		}
-
+		System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
 		first.append(atcJob);
 	}
 
