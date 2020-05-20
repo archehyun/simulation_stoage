@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.impl.stoage.atc.twin.ATCManager;
 import sim.model.impl.stoage.commom.BlockManager;
 import sim.view.framework.Rectangle;
 import sim.view.framework.SimViewObject;
@@ -20,7 +20,7 @@ import sim.view.framework.SimViewObject;
  */
 public class SimViewATC extends SimViewObject {
 
-	ATCJobManager manager = CrossOverJobManager.getInstance();
+	ATCJobManager manager = null;
 
 	SimATC atc;
 
@@ -50,9 +50,9 @@ public class SimViewATC extends SimViewObject {
 	{
 		super(atcID, x, y, width, height);
 
-		atc = manager.getATC(atcID);
+		manager = ATCManager.getInstance().getATCManager(blockID);
 
-		System.out.println(atc);
+		atc = manager.getATC(atcID);
 
 		atc.updateInitLocationOnWinddows(blockID);
 

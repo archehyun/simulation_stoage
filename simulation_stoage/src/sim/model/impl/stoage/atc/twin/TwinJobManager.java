@@ -15,14 +15,8 @@ public class TwinJobManager extends ATCJobManager {
 
 	private static TwinJobManager instance;
 
-	private TwinJobManager(String simName) {
+	public TwinJobManager(String simName) {
 		super(simName);
-	}
-
-	public static ATCJobManager getInstance() {
-		if (instance == null)
-			instance = new TwinJobManager("atcManager");
-		return instance;
 	}
 
 	private void commandProcess(SimEvent event) {
@@ -159,6 +153,12 @@ public class TwinJobManager extends ATCJobManager {
 			break;
 		}
 
+	}
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "twin";
 	}
 
 }

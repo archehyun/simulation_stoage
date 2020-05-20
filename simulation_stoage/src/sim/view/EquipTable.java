@@ -17,9 +17,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.impl.stoage.atc.twin.ATCManager;
 import sim.model.impl.stoage.commom.Block;
 import sim.model.impl.stoage.commom.BlockManager;
 import sim.view.framework.IFMonitor;
@@ -30,7 +29,9 @@ public class EquipTable extends JPanel implements IFMonitor {
 
 	JTable table;
 
-	ATCJobManager atcManager2 = CrossOverJobManager.getInstance();
+	//ATCJobManager atcManager2 = CrossOverJobManager.getInstance();
+
+	ATCManager manager = ATCManager.getInstance();
 
 	BlockManager blockManager = BlockManager.getInstance();
 
@@ -59,7 +60,7 @@ public class EquipTable extends JPanel implements IFMonitor {
 
 		this.blockID = blockID;
 
-		atcManager2.addMonitor(this);
+		manager.addMonitor(this);
 		blockManager.addMonitor(this);
 
 		table = new JTable();

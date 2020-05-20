@@ -1,7 +1,6 @@
 package sim.model.impl.stoage.atc.crossover;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCMove;
 import sim.model.impl.stoage.commom.StoageEvent;
@@ -9,7 +8,6 @@ import sim.model.queue.SimNode;
 
 public class ATCLandSideCrossMoveY extends ATCMove {
 
-	ATCJobManager manager = CrossOverJobManager.getInstance();
 
 	public ATCLandSideCrossMoveY(String simName, SimATC atc) {
 		super(simName, atc);

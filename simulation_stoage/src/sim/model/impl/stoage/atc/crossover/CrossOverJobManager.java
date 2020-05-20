@@ -19,18 +19,21 @@ import sim.model.queue.SimNode;
  */
 public class CrossOverJobManager extends ATCJobManager {
 
-	private static CrossOverJobManager instance;
-
-	private CrossOverJobManager(String simName) {
+	public CrossOverJobManager(String simName) {
 		super(simName);
 	}
+	
+	/*
+		private static CrossOverJobManager instance;
 
-	public static ATCJobManager getInstance() {
-		if (instance == null)
-			instance = new CrossOverJobManager("atcManager");
-		return instance;
-	}
 
+
+		public static ATCJobManager getInstance() {
+			if (instance == null)
+				instance = new CrossOverJobManager("atcManager");
+			return instance;
+		}
+	*/
 	/**
 	 * @param event
 	 */
@@ -171,6 +174,11 @@ public class CrossOverJobManager extends ATCJobManager {
 		first.append(atcJob);
 	}
 
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "cross";
+	}
 
 
 

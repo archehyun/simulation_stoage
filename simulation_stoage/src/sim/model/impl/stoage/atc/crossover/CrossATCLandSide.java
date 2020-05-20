@@ -5,23 +5,21 @@ import java.util.TimerTask;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCLandSideMoveY;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
 import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.Slot;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
 
 /**
- * cross type atc Ŭ����
+ * cross type atc
  * @author LDCC
  *
  */
 public class CrossATCLandSide extends SimATC {
-
-	ATCJobManager atcManager1 = CrossOverJobManager.getInstance();
 
 	MyTimer time;
 
@@ -66,6 +64,59 @@ public class CrossATCLandSide extends SimATC {
 		lastX = this.getX();
 		//time.schedule(6000);
 
+	}
+
+	private void hoistWork() throws InterruptedException {
+		Thread.sleep(500);
+	}
+
+	/**
+	 * @param node
+	 * @throws InterruptedException
+	 */
+	public void work(SimNode node) throws InterruptedException {
+		StoageEvent job = (StoageEvent) node;
+
+		moveYY.setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
+
+		switch (job.orderType) {
+
+		case StoageEvent.INBOUND:
+			jobManager.release();
+			moveTP(job);
+
+			setLoad(true);
+
+			moveDestination(job);
+
+			hoistWork();
+
+			setLoad(false);
+
+			job.getSlot().setUsed(false);
+
+			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
+
+			break;
+		case StoageEvent.OUTBOUND:
+			jobManager.release();
+			moveDestination(job);
+			hoistWork();
+			setLoad(true);
+			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
+			job.getSlot().setUsed(false);
+			jobManager = JobManager.getInstance();
+			moveTP(job);
+			hoistWork();
+			setLoad(false);
+			break;
+		case StoageEvent.MOVE:
+			moveDestination(job);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -115,7 +166,12 @@ public class CrossATCLandSide extends SimATC {
 
 	@Override
 	public void moveTP(SimEvent job) {
-		// TODO Auto-generated method stub
+		try {
+			moveYY.moveTP(job);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -126,8 +182,8 @@ public class CrossATCLandSide extends SimATC {
 	@Override
 	public synchronized void plusY() throws InterruptedException {
 
-		if (!atcManager1.overlapRectangles(this)) {
-			atcManager1.setMove(true);
+		if (!atcJobManager.overlapRectangles(this)) {
+			atcJobManager.setMove(true);
 		}
 
 		super.plusY();
@@ -140,8 +196,8 @@ public class CrossATCLandSide extends SimATC {
 	@Override
 	public synchronized void minusY() throws InterruptedException {
 
-		if (!atcManager1.overlapRectangles(this)) {
-			atcManager1.setMove(true);
+		if (!atcJobManager.overlapRectangles(this)) {
+			atcJobManager.setMove(true);
 		}
 
 		super.minusY();
@@ -149,34 +205,37 @@ public class CrossATCLandSide extends SimATC {
 
 	@Override
 	public void moveDestination(SimEvent job) {
-		// TODO Auto-generated method stub
+		try {
+			moveYY.moveDestination(job);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Override
 	public void process(SimNode node) {
 
+
 		SimEvent atcJob = (SimEvent) node;
 		plusWorkCount();
 		StoageEvent event = (StoageEvent) atcJob;
-		System.out.println("process:" + event.orderType);
+		//System.out.println("process:" + event.orderType);
 		moveXX.append(node);
-
 		moveYY.append(node);
-
 		setBusy();
-
-
+		jobManager.release();
 
 		notifyMonitor("land:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
 
 		atcJob = null;
 	}
 
-	//TODO : SINGLE ATC ����
-	//TODO : TWIN ATC ����
-	//TODO : CROSS ATC ����
-	//TODO : ���
+	//TODO : SINGLE ATC 占쏙옙占쏙옙
+	//TODO : TWIN ATC 占쏙옙占쏙옙
+	//TODO : CROSS ATC 占쏙옙占쏙옙
+	//TODO : 占쏙옙占�
 
 }
 

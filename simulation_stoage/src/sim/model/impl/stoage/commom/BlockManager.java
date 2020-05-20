@@ -30,7 +30,7 @@ public class BlockManager extends SimModelManager{
 
 	public static final int wGap=1;
 
-	public static final int block = 1;
+	public static int block = 0;
 
 	public static final int magin = 15;
 
@@ -43,6 +43,8 @@ public class BlockManager extends SimModelManager{
 	 */
 	public void setBlockCount(int blockCount)
 	{
+
+		this.block = blockCount;
 		blocks = new Block[blockCount];
 
 		for(int i=0;i<blockCount;i++)

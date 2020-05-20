@@ -5,9 +5,8 @@ import java.util.regex.Pattern;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModelManager;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.impl.stoage.atc.twin.ATCManager;
 import sim.model.queue.SimNode;
 
 /**
@@ -26,7 +25,9 @@ public class JobManager extends SimModelManager{
 
 	boolean flag=false;
 
-	ATCJobManager atcManager = CrossOverJobManager.getInstance();
+	ATCManager manager = ATCManager.getInstance();
+
+	//ATCJobManager atcManager = null;
 
 	BlockManager blockManager = BlockManager.getInstance();
 
@@ -96,7 +97,7 @@ public class JobManager extends SimModelManager{
 		{
 			ready = flag;
 			activeOrderCount--;
-			System.out.println("release");
+			System.out.println("release:" + activeOrderCount);
 
 			notify();
 		}
@@ -104,19 +105,18 @@ public class JobManager extends SimModelManager{
 		int activeOrderCount = 0;
 		public synchronized void ready()
 		{
+			activeOrderCount++;
 			ready = false;
-			while (activeOrderCount == 2)
+			while (activeOrderCount > 4)
 			{
 				try {
 
-					System.out.println("ready");
+					System.out.println(activeOrderCount + "ready");
 					wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-
-
 		}
 
 		/**
@@ -160,9 +160,9 @@ public class JobManager extends SimModelManager{
 
 				node.setY(slot.getBayIndex());
 
-				atcManager.append(node);
+				manager.getATCManager(blockID).append(node);
 
-				activeOrderCount++;
+				ready();
 
 				jobID++;
 			} catch (NullPointerException e) {
@@ -273,7 +273,7 @@ public class JobManager extends SimModelManager{
 
 						//	System.out.println("input:" + node.getSlot().getBlockID());
 
-						atcManager.append(node);
+						manager.getATCManager(0).append(node);
 
 
 					} catch (NullPointerException e) {
@@ -284,7 +284,7 @@ public class JobManager extends SimModelManager{
 				}
 
 			} else if (commandStr.equals("M")) {
-				System.out.println("Move");
+				//System.out.println("Move");
 				StoageEvent node = new StoageEvent(jobID, SimEvent.COMMAND);
 				slot = blockManager.getSlot(0, bay, row, tier);
 
@@ -301,7 +301,7 @@ public class JobManager extends SimModelManager{
 				node.setX(row);
 
 				node.setY(bay);
-				atcManager.append(node);
+				manager.getATCManager(0).append(node);
 
 			}
 

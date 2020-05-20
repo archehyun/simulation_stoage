@@ -2,7 +2,6 @@ package sim.model.impl.stoage.atc.crossover;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCCommander;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
 import sim.model.impl.stoage.atc.move.ATCSeaSideMoveY;
@@ -13,10 +12,11 @@ import sim.model.queue.SimNode;
 
 public class CrossATCSeaSide extends SimATC {
 
-	ATCJobManager atcManager1 = CrossOverJobManager.getInstance();
+
 
 	public CrossATCSeaSide(String simName, int atcID, int blockID, float row, float bay, float width, float height) {
 		super(simName, atcID, blockID, row, bay, width, height);
+
 		moveXX = new ATCMoveX(simName + "_x", this);
 
 		moveYY = new ATCSeaSideMoveY(simName + "_y", this);
@@ -85,12 +85,13 @@ public class CrossATCSeaSide extends SimATC {
 	public void work(SimNode node) throws InterruptedException {
 		StoageEvent job = (StoageEvent) node;
 
+
 		moveYY.setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
 
 		switch (job.orderType) {
 
 		case StoageEvent.INBOUND:
-
+			jobManager.release();
 			moveTP(job);
 
 			setLoad(true);
@@ -105,19 +106,15 @@ public class CrossATCSeaSide extends SimATC {
 
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
-			jobManager.release();
-
 			break;
 		case StoageEvent.OUTBOUND:
-
+			jobManager.release();
 			moveDestination(job);
 			hoistWork();
-
 			setLoad(true);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
-			jobManager.release();
 			moveTP(job);
 			hoistWork();
 			setLoad(false);
@@ -142,14 +139,15 @@ public class CrossATCSeaSide extends SimATC {
 	@Override
 	public synchronized void plusY() throws InterruptedException {
 
-		if (atcManager1.overlapRectangles(this)) {
+		if (atcJobManager.overlapRectangles(this)) {
 			isMove = false;
 		} else {
 		}
-
-		while (!isMove) {
-			wait();
-		}
+		//
+		/*
+				while (!isMove) {
+					wait();
+				}*/
 
 		super.plusY();
 	}
@@ -161,13 +159,13 @@ public class CrossATCSeaSide extends SimATC {
 	@Override
 	public synchronized void minusY() throws InterruptedException {
 
-		if (atcManager1.overlapRectangles(this)) {
+		if (atcJobManager.overlapRectangles(this)) {
 			isMove = false;
 		} else {
 		}
-		while (!isMove) {
+		/*while (!isMove) {
 			wait();
-		}
+		}*/
 
 		super.minusY();
 	}

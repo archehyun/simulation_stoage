@@ -5,7 +5,7 @@ import java.util.HashMap;
 import sim.model.queue.SimNode;
 
 /**
- * ??뮬�???��?? ?�벤?? ?��????
+ * define simulation eventf
  *
  * @author archehyun
  * @SEE
@@ -36,12 +36,12 @@ public class SimEvent extends SimNode{
 	HashMap<String, Object> map;
 
 	/**
-	 *
+	 *simualtion model name
 	 */
 	public String simName;
 
 	/**
-	 *?�벤?? ????
+	 *?event type
 	 */
 	private int eventType;
 

@@ -1,7 +1,6 @@
 package sim.model.impl.stoage.atc.twin;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCLandSideMoveY;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
@@ -11,7 +10,7 @@ import sim.model.queue.SimNode;
 
 public class TwinLandSideATC extends SimATC {
 
-	ATCJobManager atcManager1 = TwinJobManager.getInstance();
+
 
 	public TwinLandSideATC(String simName, int atcID, int blockID, float x, float y, float width, float height) {
 		super(simName, atcID, blockID, x, y, width, height);
@@ -51,7 +50,7 @@ public class TwinLandSideATC extends SimATC {
 	@Override
 	public synchronized void plusY() throws InterruptedException {
 
-		atcManager1.overlapRectangles(this);
+		atcJobManager.overlapRectangles(this);
 
 		super.plusY();
 	}
@@ -63,7 +62,7 @@ public class TwinLandSideATC extends SimATC {
 	@Override
 	public synchronized void minusY() throws InterruptedException {
 
-		atcManager1.overlapRectangles(this);
+		atcJobManager.overlapRectangles(this);
 
 		super.minusY();
 	}
@@ -94,10 +93,10 @@ public class TwinLandSideATC extends SimATC {
 		atcJob = null;
 	}
 
-	//TODO : SINGLE ATC ����
-	//TODO : TWIN ATC ����
-	//TODO : CROSS ATC ����
-	//TODO : ���
+	//TODO : SINGLE ATC 占쏙옙占쏙옙
+	//TODO : TWIN ATC 占쏙옙占쏙옙
+	//TODO : CROSS ATC 占쏙옙占쏙옙
+	//TODO : 占쏙옙占�
 
 
 

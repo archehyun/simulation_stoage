@@ -2,7 +2,6 @@ package sim.model.impl.stoage.atc.twin;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCCommander;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
 import sim.model.impl.stoage.atc.move.ATCSeaSideMoveY;
@@ -17,8 +16,6 @@ import sim.model.queue.SimNode;
  */
 public class TwinSeaSideATC extends SimATC {
 
-
-	ATCJobManager atcManager1 = TwinJobManager.getInstance();
 
 	public TwinSeaSideATC(String simName, int atcID, int blockID, float row, float bay, float width, float height) {
 		super(simName, atcID, blockID, row, bay, width, height);
@@ -148,7 +145,7 @@ public class TwinSeaSideATC extends SimATC {
 	@Override
 	public synchronized void plusY() throws InterruptedException {
 
-		if (atcManager1.overlapRectangles(this)) {
+		if (atcJobManager.overlapRectangles(this)) {
 			isMove = false;
 		} else {
 		}
@@ -167,7 +164,7 @@ public class TwinSeaSideATC extends SimATC {
 	@Override
 	public synchronized void minusY() throws InterruptedException {
 
-		if (atcManager1.overlapRectangles(this)) {
+		if (atcJobManager.overlapRectangles(this)) {
 			isMove = false;
 		} else {
 		}

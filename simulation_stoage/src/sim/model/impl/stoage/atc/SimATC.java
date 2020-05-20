@@ -2,8 +2,8 @@ package sim.model.impl.stoage.atc;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
 import sim.model.impl.stoage.atc.move.ATCMove;
+import sim.model.impl.stoage.atc.twin.ATCManager;
 import sim.model.impl.stoage.commom.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.view.Vector2;
@@ -15,13 +15,17 @@ import sim.view.framework.Rectangle;
  */
 public abstract class SimATC extends SimModel {
 
-	//��ü ��ġ
+	ATCManager atcManager = ATCManager.getInstance();
+
+	protected ATCJobManager atcJobManager;
+
+	//占쏙옙체 占쏙옙치
 	public final Vector2 position;
 
-	//��ü ��ġ
+	//占쏙옙체 占쏙옙치
 	public final Vector2 initPosition = new Vector2();
 
-	// ��ü ���
+	// 占쏙옙체 占쏙옙占�
 	public final Rectangle bounds;
 
 	public final Vector2 velocity;
@@ -55,8 +59,6 @@ public abstract class SimATC extends SimModel {
 		return bay;
 	}
 
-	ATCJobManager atcJobManager = CrossOverJobManager.getInstance();
-
 	/**
 	 * row
 	 */
@@ -81,17 +83,17 @@ public abstract class SimATC extends SimModel {
 
 	protected ATCMove moveYY;
 
-	protected int initX; // row ���� ��ġ
+	protected int initX; // row 占쏙옙占쏙옙 占쏙옙치
 
-	protected int initY; // bay ���� ��ġ
+	protected int initY; // bay 占쏙옙占쏙옙 占쏙옙치
 
-	//protected int initXpointOnWindows = 0; // row ���� �ʱ� ��ġ
+	//protected int initXpointOnWindows = 0; // row 占쏙옙占쏙옙 占십깍옙 占쏙옙치
 
-	//protected int initYpointOnWindows = 0; // bay  ���� �ʱ� ��ġ
+	//protected int initYpointOnWindows = 0; // bay  占쏙옙占쏙옙 占십깍옙 占쏙옙치
 
-	//protected int currentXpointOnWindows = 0; // row ���� �ʱ� ��ġ
+	//protected int currentXpointOnWindows = 0; // row 占쏙옙占쏙옙 占십깍옙 占쏙옙치
 
-	//protected int currentYpointOnWindows = 0; // bay  ���� �ʱ� ��ġ
+	//protected int currentYpointOnWindows = 0; // bay  占쏙옙占쏙옙 占십깍옙 占쏙옙치
 
 	protected JobManager jobManager = JobManager.getInstance();
 
@@ -207,6 +209,9 @@ public abstract class SimATC extends SimModel {
 		super(simName);
 		this.atcID =atcID;
 		this.blockID = blockID;
+
+
+		atcJobManager = atcManager.getATCManager(blockID);
 
 		this.setInitBlockLocation(row, bay);
 
@@ -355,6 +360,7 @@ public abstract class SimATC extends SimModel {
 
 	public void plusWorkCount() {
 		workCount++;
+
 		SimEvent event = new SimEvent();
 		event.add("type", "block");
 		blockManager.notifyMonitor(event);

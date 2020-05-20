@@ -13,7 +13,7 @@ import sim.model.core.SimModelManager;
 public abstract class ATCJobManager extends SimModelManager {
 
 
-
+	int blockID;
 	public static int SPEED = 100;
 
 	Random rn =new Random();
@@ -116,4 +116,5 @@ public abstract class ATCJobManager extends SimModelManager {
 
 	}
 
+	public abstract String getType();
 }

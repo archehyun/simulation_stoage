@@ -101,8 +101,6 @@ public class ATCLandSideMoveY extends ATCMove {
 			job.getSlot().setUsed(false);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
-			jobManager.release();
-
 			atc.plusWorkCount();
 
 			break;

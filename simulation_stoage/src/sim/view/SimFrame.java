@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCJobManager;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.impl.stoage.atc.twin.ATCManager;
 import sim.model.impl.stoage.commom.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.UnparserableCommandException;
@@ -44,7 +44,9 @@ public class SimFrame extends JFrame implements ActionListener {
 
 	protected static Logger logger = Logger.getLogger(SimFrame.class.getName());
 
-	ATCJobManager atcManager2 = CrossOverJobManager.getInstance();
+	//ATCJobManager atcManager2 = CrossOverJobManager.getInstance();
+
+	ATCManager atcManager = ATCManager.getInstance();
 
 	JobManager jobManager = JobManager.getInstance();
 
@@ -148,7 +150,7 @@ public class SimFrame extends JFrame implements ActionListener {
 		setVisible(true);
 		setAlwaysOnTop(true);
 
-		atcManager2.addMonitor(txfArea);
+		//atcManager2.addMonitor(txfArea);
 		jobManager.addMonitor(txfArea);
 	}
 
@@ -410,7 +412,7 @@ public class SimFrame extends JFrame implements ActionListener {
 
 					event.add("speed", speed);
 
-					atcManager2.append(event);
+					atcManager.append(event);
 
 					ATCJobManager.SPEED = speed;
 
@@ -418,7 +420,6 @@ public class SimFrame extends JFrame implements ActionListener {
 					txfATCSpeed.setText(String.valueOf(ATCJobManager.SPEED));
 
 					JOptionPane.showMessageDialog(this, "Only Integer");
-					//한글 깨짐
 				}
 
 

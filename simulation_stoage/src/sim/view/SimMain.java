@@ -1,11 +1,24 @@
 package sim.view;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.crossover.CrossATCLandSide;
 import sim.model.impl.stoage.atc.crossover.CrossATCSeaSide;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.impl.stoage.atc.twin.ATCManager;
 import sim.model.impl.stoage.commom.Block;
 import sim.model.impl.stoage.commom.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
@@ -13,6 +26,16 @@ import sim.model.impl.stoage.commom.UnparserableCommandException;
 import sim.view.framework.SimCanvas;
 
 /**
+ *
+ * 장치장 ATC 타입에 따른 성능을 시뮬레이션 하는 프로그램
+ * a simulation to merasure the  prefomance of Automatic Transfer Crane  type
+ *
+ * 3가지 타입의 atc 가 있다
+ * there is three type of atc
+ *
+ * 첫번째는 크로스 타입니다.
+ * the first is Cross type,  it has two Crane
+ *
  * @author  ARCHEHYUN
  *
  */
@@ -30,22 +53,112 @@ public class SimMain {
 		this.canvas = canvas;
 	}
 
-	ATCJobManager atcManager1 = CrossOverJobManager.getInstance();
+	ATCManager atcManagerImpl = ATCManager.getInstance();
+	ATCJobManager atcManager;
 
-	//ATCJobManager atcManager2 = TwinJobManager.getInstance();
 
 	JobManager jobManager = JobManager.getInstance();
 
-	BlockManager blockManager = BlockManager.getInstance();
+	static BlockManager blockManager = BlockManager.getInstance();
 
+	public void paraseInit()
+	{
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document xml = null;
+			//XML DOCUMENT 획득
+
+			xml = documentBuilder.parse(ClassLoader.getSystemResource("layout/layout.xml").toURI().toString());
+
+			Element element = xml.getDocumentElement();
+			NodeList blockList = element.getElementsByTagName("block");
+
+			blockManager.setBlockCount(blockList.getLength());
+
+			if (blockList.getLength() > 0) {
+				//반복문 이용
+				for (int i = 0; i < blockList.getLength(); i++) {
+					//blog xml태그의 자식태그 한번 더 획득
+					Element blockElement = (Element) blockList.item(i);
+
+					String type = blockElement.getAttribute("type");
+
+					int blockID = createBlock(blockElement);
+
+					atcManager = atcManagerImpl.createManger(blockID, type);
+
+					NodeList atcList = blockElement.getElementsByTagName("atc");
+
+
+					if (atcList.getLength() > 0) {
+						for (int j = 0; j < atcList.getLength(); j++) {
+							Node atcNode = atcList.item(j);
+
+							createATC(blockID, atcManager, atcNode);
+						}
+					}
+				}
+			}
+
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void createATC(int blockID, ATCJobManager atcManager, Node atcNode) {
+
+		Element atcElement = (Element) atcNode;
+		String type = atcElement.getAttribute("type");
+		atcElement.getAttribute("id");
+		atcElement.getAttribute("x");
+		atcElement.getAttribute("y");
+		NodeList initLocations = atcElement.getElementsByTagName("initLcation");
+		Element initLocation = (Element) initLocations.item(0);
+
+		SimATC atc = null;
+		if (atcManager.getType().equals("cross")) {
+			if (type.equals("sea")) {
+				atc = new CrossATCSeaSide("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
+			} else if (type.equals("land")) {
+				atc = new CrossATCLandSide("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
+			}
+		}
+		atc.setInitBlockLocation(Integer.parseInt(initLocation.getAttribute("row")), Integer.parseInt(initLocation.getAttribute("bay")));
+		atc.setSpeed(ATCJobManager.SPEED);
+		atcManager.addSimModel(atc);
+		canvas.addObject(atc);
+
+	}
+
+	private int createBlock(Element node) {
+
+		Element blockElement = node;
+		blockElement.getNodeName();
+		blockElement.getAttribute("id");
+		int blockID = Integer.parseInt(blockElement.getAttribute("id"));
+		int x = Integer.parseInt(blockElement.getAttribute("x"));
+		int y = Integer.parseInt(blockElement.getAttribute("y"));
+
+		Block blocks = blockManager.getBlock(blockID);
+		blocks.setLocation(x, y);
+		canvas.addObject(blocks);
+
+		return blockID;
+	}
 
 	/**
+	 * @throws ParserConfigurationException
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 * @throws SAXException
 	 *
 	 */
 	public void init()
 	{
-
-		// block init
+		/*// block init
 		for (int blockID = 0; blockID < BlockManager.block; blockID++) {
 			Block blocks = blockManager.getBlock(blockID);
 			blocks.setLocation(blockID * BlockManager.BLOCK_GAP + BlockManager.magin, BlockManager.magin);
@@ -68,7 +181,8 @@ public class SimMain {
 
 			canvas.addObject(atc1);
 			canvas.addObject(atc2);
-		}
+		}*/
+		paraseInit();
 
 
 	}
@@ -79,7 +193,7 @@ public class SimMain {
 	 */
 	public void simulationStart()
 	{
-		atcManager1.simStart();
+		atcManagerImpl.simStart();
 		canvas.start();
 	}
 
@@ -91,7 +205,7 @@ public class SimMain {
 		SimEvent event = new SimEvent(0);
 		event.setEventMessage("simstop");
 		jobManager.append(event);
-		atcManager1.simStop();
+		atcManagerImpl.simStop();
 	}
 
 	public SimMain() {
