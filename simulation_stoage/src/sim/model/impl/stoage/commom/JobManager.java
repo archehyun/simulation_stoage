@@ -6,7 +6,9 @@ import java.util.regex.Pattern;
 import sim.model.core.SimEvent;
 import sim.model.core.SimModelManager;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.twin.ATCManager;
+import sim.model.impl.stoage.block.BlockManager;
+import sim.model.impl.stoage.block.Slot;
+import sim.model.impl.stoage.manager.ATCManager;
 import sim.model.queue.SimNode;
 
 /**
@@ -21,13 +23,11 @@ public class JobManager extends SimModelManager{
 
 	private int jobID;
 
-	Random rn = new Random();
+	private Random rn = new Random();
 
 	boolean flag=false;
 
 	ATCManager manager = ATCManager.getInstance();
-
-	//ATCJobManager atcManager = null;
 
 	BlockManager blockManager = BlockManager.getInstance();
 
@@ -54,11 +54,15 @@ public class JobManager extends SimModelManager{
 
 	}
 
-	public synchronized void release()
+	public synchronized void release(String name)
 	{
+		System.out.println(name);
 		generate.release();;
 	}
 
+	/**
+	 * put order
+	 */
 	public void putOrder() {
 		try {
 			generate.putOrder();
@@ -96,31 +100,47 @@ public class JobManager extends SimModelManager{
 		public synchronized void release()
 		{
 			ready = flag;
-			activeOrderCount--;
+
+			minusActiveOrder();
 			System.out.println("release:" + activeOrderCount);
 
 			notify();
 		}
 
+		private synchronized void plusActiveOrder() {
+			activeOrderCount++;
+			System.out.println("plus:" + activeOrderCount);
+		}
+
+		private synchronized void minusActiveOrder() {
+			activeOrderCount--;
+		}
+
 		int activeOrderCount = 0;
+
 		public synchronized void ready()
 		{
-			activeOrderCount++;
 			ready = false;
-			while (activeOrderCount > 4)
-			{
-				try {
+			/*	while (activeOrderCount == 4)
+				{
+					try {
+						System.out.println("ready:" + activeOrderCount);
+						wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}*/
 
-					System.out.println(activeOrderCount + "ready");
-					wait();
+			try {
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
 			}
 		}
 
 		/**
-		 * �ֹ� ����
+		 * put order
 		 * @throws Exception
 		 */
 		public void putOrder() throws Exception {
@@ -162,9 +182,11 @@ public class JobManager extends SimModelManager{
 
 				manager.getATCManager(blockID).append(node);
 
-				ready();
 
+				plusActiveOrder();
 				jobID++;
+
+
 			} catch (NullPointerException e) {
 				System.err.println("error block:" + blockID);
 				e.printStackTrace();
@@ -173,11 +195,14 @@ public class JobManager extends SimModelManager{
 
 		@Override
 		public void run() {
+
+			activeOrderCount = 0;
+
 			while(flag)
 			{
 				try {
-					ready();
 					putOrder();
+					ready();
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

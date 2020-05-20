@@ -5,7 +5,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
 
 public class SimInfoPanel extends JPanel {
 

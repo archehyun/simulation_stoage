@@ -14,15 +14,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.crossover.CrossATCLandSide;
-import sim.model.impl.stoage.atc.crossover.CrossATCSeaSide;
-import sim.model.impl.stoage.atc.twin.ATCManager;
-import sim.model.impl.stoage.commom.Block;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.atc.impl.CrossLandSideATC;
+import sim.model.impl.stoage.atc.impl.CrossSeaSideATC;
+import sim.model.impl.stoage.block.Block;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.UnparserableCommandException;
+import sim.model.impl.stoage.manager.ATCJobManager;
+import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.SimCanvas;
 
 /**
@@ -121,9 +121,9 @@ public class SimMain {
 		SimATC atc = null;
 		if (atcManager.getType().equals("cross")) {
 			if (type.equals("sea")) {
-				atc = new CrossATCSeaSide("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
+				atc = new CrossSeaSideATC("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
 			} else if (type.equals("land")) {
-				atc = new CrossATCLandSide("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
+				atc = new CrossLandSideATC("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
 			}
 		}
 		atc.setInitBlockLocation(Integer.parseInt(initLocation.getAttribute("row")), Integer.parseInt(initLocation.getAttribute("bay")));

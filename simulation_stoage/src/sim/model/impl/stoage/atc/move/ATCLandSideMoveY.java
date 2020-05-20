@@ -2,7 +2,7 @@ package sim.model.impl.stoage.atc.move;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
@@ -100,7 +100,7 @@ public class ATCLandSideMoveY extends ATCMove {
 			atc.setLoad(false);
 			job.getSlot().setUsed(false);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
-
+			atc.arrival();
 			atc.plusWorkCount();
 
 			break;
@@ -113,11 +113,12 @@ public class ATCLandSideMoveY extends ATCMove {
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
-			jobManager.release();
+			jobManager.release("landSideMove");
 			moveTP(job);
 			Thread.sleep(500);
 
 			atc.setLoad(false);
+			atc.arrival();
 			atc.plusWorkCount();
 			break;
 		case StoageEvent.MOVE:

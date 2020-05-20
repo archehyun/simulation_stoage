@@ -1,4 +1,4 @@
-package sim.model.impl.stoage.atc.twin;
+package sim.model.impl.stoage.manager.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -6,19 +6,25 @@ import java.util.List;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.commom.StoageEvent;
+import sim.model.impl.stoage.manager.ATCJobManager;
 import sim.model.queue.SimNode;
 
-public class TwinJobManager extends ATCJobManager {
+/**
+ *
+ * cross over type atc manager
+ * @author LDCC
+ *
+ */
+public class CrossOverJobManager extends ATCJobManager {
 
-	private static TwinJobManager instance;
-
-	public TwinJobManager(String simName) {
+	public CrossOverJobManager(String simName) {
 		super(simName);
 	}
-
+	/**
+	 * @param event
+	 */
 	private void commandProcess(SimEvent event) {
 
 		Iterator<SimModel> iter = list.iterator();
@@ -26,8 +32,6 @@ public class TwinJobManager extends ATCJobManager {
 		switch (event.getCommandType()) {
 		case SimEvent.COMMAND_UPDATE_SPEED:
 			int speed = (int) event.get("speed");
-
-			System.out.println("update speed:" + speed);
 
 			while (iter.hasNext()) {
 				SimATC model = (SimATC) iter.next();
@@ -41,14 +45,16 @@ public class TwinJobManager extends ATCJobManager {
 
 				StoageEvent ee = (StoageEvent) event;
 
-				int blockId = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+				ee.orderType = StoageEvent.MOVE;
+				int blockId = ((StoageEvent) event).getSlot().getBlock().getBlockID();
+
 
 				if ((model.getAtcID() % 100) == blockId) {
 
 					if (model.getAtcID() == ee.getATCID()) {
-						ee.orderType = StoageEvent.MOVE;
+
 						model.append(ee);
-						logger.debug("append atc order:" + atcJob.getSimName());
+						logger.debug("append atc order:" + event.getSimName());
 					}
 				}
 			}
@@ -57,8 +63,22 @@ public class TwinJobManager extends ATCJobManager {
 		default:
 			break;
 		}
+	}
+
+	private void orderProcess(SimEvent atcJob) {
+
+		atcJob.add("atc", list);
+
+		int blockID = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+		//divied(blockID, atcJob);
+		minWorkACT(blockID, atcJob);
+
+		if (atcJob == null)
+			System.err.println("error");
+		this.notifyMonitor(atcJob);
 
 	}
+
 	//SimEvent atcJob;
 
 	private void divied(int blockID, SimEvent atcJob) {
@@ -87,52 +107,6 @@ public class TwinJobManager extends ATCJobManager {
 		}
 	}
 
-	public void minWorkACT(int blockID, SimEvent atcJob) {
-
-		Iterator<SimModel> iter = list.iterator();
-
-		List<SimATC> li = new LinkedList<SimATC>();
-
-		while (iter.hasNext()) {
-			SimATC model = (SimATC) iter.next();
-			if ((model.getAtcID() % 100) == blockID) {
-				li.add(model);
-			}
-		}
-
-		SimATC first = li.get(0);
-		for (int i = 1; i < li.size(); i++) {
-			SimATC temp = li.get(i);
-			if (first.getWorkCount() > temp.getWorkCount()) {
-				first = temp;
-			}
-		}
-
-		first.append(atcJob);
-	}
-
-	private void orderProcess(SimEvent atcJob) {
-		//	atcJob = (SimEvent) node;
-
-
-
-		atcJob.add("atc", list);
-
-
-
-		int blockID = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
-		//divied(blockID, atcJob);
-		minWorkACT(blockID, atcJob);
-
-		if (atcJob == null)
-			System.err.println("error");
-		this.notifyMonitor(atcJob);
-
-	}
-
-
-	SimEvent atcJob;
-
 	//
 	@Override
 	public void process(SimNode node) {
@@ -140,6 +114,7 @@ public class TwinJobManager extends ATCJobManager {
 		//		this.node = node;
 
 		SimEvent event = (SimEvent) node;
+
 		switch (event.getEventType()) {
 
 		case SimEvent.COMMAND:
@@ -155,10 +130,46 @@ public class TwinJobManager extends ATCJobManager {
 
 	}
 
+
+
+	/**
+	 *
+	 * 최소 WORK ATC 선택
+	 *
+	 * @param blockID
+	 * @param atcJob
+	 */
+	private void minWorkACT(int blockID, SimEvent atcJob) {
+
+		Iterator<SimModel> iter = list.iterator();
+
+		List<SimATC> li = new LinkedList<SimATC>();
+
+		while (iter.hasNext()) {
+			SimATC model = (SimATC) iter.next();
+			if ((model.getAtcID() % 100) == blockID) {
+				li.add(model);
+			}
+		}
+
+
+		SimATC first = li.get(0);
+		for (int i = 1; i < li.size(); i++) {
+			SimATC temp = li.get(i);
+			if (first.getWorkCount() > temp.getWorkCount()) {
+				first = temp;
+			}
+		}
+		//System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
+		first.append(atcJob);
+	}
+
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return "twin";
+		return "cross";
 	}
+
+
 
 }

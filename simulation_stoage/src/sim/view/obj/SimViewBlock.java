@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.commom.Block;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.Block;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.view.framework.SimViewObject;
 
 public class SimViewBlock extends SimViewObject{
@@ -94,10 +94,10 @@ public class SimViewBlock extends SimViewObject{
 
 				g.setColor(Color.black);
 
-				xx = (int) ((initX + 2 + j * (BlockManager.conW + BlockManager.wGap)) * BlockManager.blockRate);
-				yy = (int) ((initY + 2 + 10 + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
+				//xx = (int) ((initX + 2 + j * (BlockManager.conW + BlockManager.wGap)) * BlockManager.blockRate);
+				//yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
 
-				g.drawString(blockContainerCount + "", xx - 5, yy);
+				g.drawString(blockContainerCount + "", xx - 1, yy + 11);
 			}
 
 			g.setColor(Color.white);

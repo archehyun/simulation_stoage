@@ -12,15 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.twin.ATCManager;
-import sim.model.impl.stoage.commom.Block;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
+import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.IFMonitor;
 
 public class EquipTable extends JPanel implements IFMonitor {
@@ -99,47 +97,47 @@ public class EquipTable extends JPanel implements IFMonitor {
 
 	@Override
 	public void updateMonitor(SimEvent message) {
-		List li = (List) message.get("atc");
-
+		/*List li = (List) message.get("atc");
+		
 		if (li != null)
 		{
 			try {
 				model.update(li);
-
+		
 				table.tableChanged(new TableModelEvent(model));
 				repaint();
-
+		
 				table.setModel(model);
-
-
+		
+		
 			} catch (Exception e) {
-
+		
 				e.printStackTrace();
-
+		
 			}
 		}
-
-
-
+		
+		
+		
 		String type = (String) message.get("type");
-
+		
 		if (type != null && type.equals("block")) {
-
+		
 			Block blocks[] = (Block[]) message.get("blocks");
-
+		
 			try {
 			int blockContainerCount = blocks[blockID].getContainerCount();
-
+		
 			int totalSlot = blocks[blockID].getTotalSlot();
-
+		
 			float persent = (float) blockContainerCount / (float) totalSlot * 100;
-
-
+		
+		
 			lblUtil.setText(blockContainerCount + "/" + totalSlot + "(" + String.format("%.1f", persent) + "%)");
 			} catch (Exception e) {
 				lblUtil.setText(e.getMessage());
 			}
-		}
+		}*/
 	}
 
 	class SimpleTableModel extends AbstractTableModel {
@@ -253,7 +251,7 @@ public class EquipTable extends JPanel implements IFMonitor {
 		pnMain.add(pnInfo);
 		pnMain.add(pnATC);
 
-		//lblBlockID.setText(blockID + "¹ø");
+		//lblBlockID.setText(blockID + "ï¿½ï¿½");
 
 		return pnMain;
 

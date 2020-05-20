@@ -1,7 +1,5 @@
 package sim.view.framework;
 
-import sim.view.Vector2;
-
 /**
  * �簢�� ��� ǥ�� Ŭ����
  *

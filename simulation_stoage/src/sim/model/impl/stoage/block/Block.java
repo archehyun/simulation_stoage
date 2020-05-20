@@ -1,11 +1,11 @@
-package sim.model.impl.stoage.commom;
+package sim.model.impl.stoage.block;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 /**
- * ºí·° Á¤º¸ Ç¥Çô Å¬·¡½º
+ * ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
  * @author archehyun
  *
  */
@@ -128,7 +128,7 @@ public class Block {
 		return getContainerCount() / totalSlot;
 	}
 
-	// ÀüÃ¼ ÄÁÅ×ÀÌ³Ê ¼ö
+	// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½
 	public int getContainerCount() throws Exception
 	{
 		if (containerCount > totalSlot)
@@ -136,7 +136,7 @@ public class Block {
 		return containerCount;
 	}
 
-	// Ã¤¿öÁ® ÀÖ´Â SLOT Áß ÃÖ»óÀ§ Slot ¹ÝÈ¯
+	// Ã¤ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ SLOT ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ Slot ï¿½ï¿½È¯
 	Random rn = new Random();
 	List<Slot> upperSlot = new LinkedList<Slot>();
 
@@ -156,14 +156,14 @@ public class Block {
 			{
 				for(int z=0;z<tier;z++)
 				{
-					if(z==tier-1)// ÃÖ »ó´Ü, ¾Æ·¡ ºñ¾îÀÖÀ¸¸é ¾ÈµÊ
+					if(z==tier-1)// ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½Æ·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½
 					{
 						if(!block_slots[i][j][z].isEmpty())
 						{
 							upperSlot.add( block_slots[i][j][z]);
 						}
 					}
-					if(z<tier-1&&!block_slots[i][j][z].isEmpty()&&block_slots[i][j][z+1].isEmpty())// ÃÖ »ó´Ü, ¾Æ·¡ ºñ¾îÀÖÀ¸¸é ¾ÈµÊ
+					if(z<tier-1&&!block_slots[i][j][z].isEmpty()&&block_slots[i][j][z+1].isEmpty())// ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½Æ·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½
 					{
 						upperSlot.add(block_slots[i][j][z]);
 					}
@@ -173,7 +173,7 @@ public class Block {
 		return upperSlot.get(rn.nextInt(upperSlot.size()));
 	}
 
-	// ºñ¾î ÀÖ´Â À§Ä¡ ÇÏ³ª ¹ÝÈ¯
+	// ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½Ä¡ ï¿½Ï³ï¿½ ï¿½ï¿½È¯
 
 	/**
 	 * @return
@@ -188,20 +188,20 @@ public class Block {
 				{
 					for (int z = 0; z < tier; z++)
 					{
-						if (z == 0)// ¹Ù´Ú, À§°¡ ºñ¾îÀÖ¾î¾ß ÇÔ
+						if (z == 0)// ï¿½Ù´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½
 						{
 							if (block_slots[i][j][z].isEmpty() && block_slots[i][j][z + 1].isEmpty() && !block_slots[i][j][z].isUsed()) {
 								emptySlot.add(block_slots[i][j][z]);
 
 							}
 
-						} else if (z == tier - 1)// ÃÖ »ó´Ü, ¾Æ·¡ ºñ¾îÀÖÀ¸¸é ¾ÈµÊ
+						} else if (z == tier - 1)// ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½Æ·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½
 						{
 							if (block_slots[i][j][z].isEmpty() && !block_slots[i][j][z - 1].isEmpty() && !block_slots[i][j][z].isUsed()) {
 								emptySlot.add(block_slots[i][j][z]);
 							}
 						}
-						else //Áß°£ À§´Â ºñ¾î ÀÖ°í ¾Æ·¡´Â Â÷ÀÖ¾î¾ß ÇÔ
+						else //ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½
 						{
 							if (!block_slots[i][j][z - 1].isEmpty() && block_slots[i][j][z].isEmpty() && block_slots[i][j][z + 1].isEmpty() && !block_slots[i][j][z].isUsed()) {
 								emptySlot.add(block_slots[i][j][z]);

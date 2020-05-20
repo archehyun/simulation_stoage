@@ -2,7 +2,7 @@ package sim.model.impl.stoage.atc.move;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
@@ -88,8 +88,8 @@ public class ATCSeaSideMoveY extends ATCMove {
 			atc.setLoad(false);
 			job.getSlot().setUsed(false);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
-
-			jobManager.release();
+			atc.arrival();
+			jobManager.release("SeaSideMove");
 			break;
 		case StoageEvent.OUTBOUND:
 
@@ -99,10 +99,13 @@ public class ATCSeaSideMoveY extends ATCMove {
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
-			jobManager.release();
+
 			moveTP(job);
 			workHoist();
+
 			atc.setLoad(false);
+			atc.arrival();
+			jobManager.release("SeaSideMove");
 			break;
 		case StoageEvent.MOVE:
 			moveDestination(job);

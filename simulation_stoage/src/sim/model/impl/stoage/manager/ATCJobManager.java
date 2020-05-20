@@ -1,10 +1,11 @@
-package sim.model.impl.stoage.atc;
+package sim.model.impl.stoage.manager;
 
 import java.util.Iterator;
 import java.util.Random;
 
 import sim.model.core.SimModel;
 import sim.model.core.SimModelManager;
+import sim.model.impl.stoage.atc.SimATC;
 
 /**
  * @author archehyun
@@ -13,7 +14,8 @@ import sim.model.core.SimModelManager;
 public abstract class ATCJobManager extends SimModelManager {
 
 
-	int blockID;
+	private int blockID;
+
 	public static int SPEED = 100;
 
 	Random rn =new Random();
@@ -68,7 +70,6 @@ public abstract class ATCJobManager extends SimModelManager {
 	 * @return busy atc Count
 	 */
 	public int getBusyCount() {
-
 
 		Iterator<SimModel> iter = list.iterator();
 		int count=0;
