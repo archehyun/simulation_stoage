@@ -87,15 +87,16 @@ public class ATCLandSideMoveY extends ATCMove {
 
 			moveTP(job);
 
+
 			// hoist work
-			Thread.sleep(500);
+			atc.workHoist();
 
 			atc.setLoad(true);
 
 			moveDestination(job);
 
 			// hoist work
-			Thread.sleep(500);
+			atc.workHoist();
 
 			atc.setLoad(false);
 			job.getSlot().setUsed(false);
@@ -107,7 +108,7 @@ public class ATCLandSideMoveY extends ATCMove {
 		case StoageEvent.OUTBOUND:
 
 			moveDestination(job);
-			Thread.sleep(500);
+			atc.workHoist();
 
 			atc.setLoad(true);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
@@ -115,7 +116,7 @@ public class ATCLandSideMoveY extends ATCMove {
 			jobManager = JobManager.getInstance();
 			jobManager.release("landSideMove");
 			moveTP(job);
-			Thread.sleep(500);
+			atc.workHoist();
 
 			atc.setLoad(false);
 			atc.arrival();

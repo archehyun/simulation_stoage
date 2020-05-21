@@ -43,8 +43,6 @@ public class BlockManager extends SimModelManager{
 	 */
 	public void setBlockCount(int blockCount)
 	{
-
-		this.block = blockCount;
 		blocks = new Block[blockCount];
 
 		for(int i=0;i<blockCount;i++)
@@ -72,6 +70,8 @@ public class BlockManager extends SimModelManager{
 
 	public void blockInit()
 	{
+
+		setBlockCount(block);
 		for(int i=0;i<blocks.length;i++)
 		{
 			blockInit(i);
@@ -122,7 +122,9 @@ public class BlockManager extends SimModelManager{
 
 
 	public Block getBlock(int blockID) {
-		// TODO Auto-generated method stub
+
+		System.out.println(blocks.length);
+
 		return blocks[blockID];
 	}
 

@@ -61,6 +61,19 @@ public class ATCManager {
 
 	}
 
+	public void clear() {
+		Iterator<Integer> keys = atcManagerList.keySet().iterator();
+		while (keys.hasNext()) {
+			int blockID = keys.next();
+			ATCJobManager manager = atcManagerList.get(blockID);
+			manager.clear();
+
+		}
+
+		atcManagerList.clear();
+
+	}
+
 	public void simStop() {
 		Iterator<Integer> keys = atcManagerList.keySet().iterator();
 		while (keys.hasNext()) {

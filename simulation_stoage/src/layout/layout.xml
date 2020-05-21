@@ -2,15 +2,12 @@
 <root>
     <block id="0" x="15" y="15" conW="2" conH="6"  row="4" bay="25" tier="5" type="cross">    
     	<atcMager id="1" >
-    		<blockID>0</blockID>
     		<type>cross</type>
     	</atcMager>    	
     	<atc id="1" x="0" y="0" width="0" height="0" type ="sea">
-    			<blockID>0</blockID>
     			<initLcation bay="0" row="0"></initLcation>
     	</atc>
     	<atc id="2" x="0" y="0" width="0" height="0" type="land">
-    			<blockID>0</blockID>
     			<initLcation bay="25" row="0"></initLcation>
     	</atc>
     </block>

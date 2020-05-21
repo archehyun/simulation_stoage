@@ -6,7 +6,6 @@ import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
 import sim.model.impl.stoage.atc.move.ATCSeaSideMoveY;
 import sim.model.impl.stoage.block.BlockManager;
-import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
 
@@ -79,57 +78,56 @@ public class CrossSeaSideATC extends SimATC {
 		atcJob = null;
 	}
 
-	/**
-	 * @param node
-	 * @throws InterruptedException
-	 */
-	public void work(SimNode node) throws InterruptedException {
-		StoageEvent job = (StoageEvent) node;
+	/*	*//**
+			* @param node
+			* @throws InterruptedException
+			*//*
+				public void work(SimNode node) throws InterruptedException {
+				StoageEvent job = (StoageEvent) node;
+				
+				
+				moveYY.setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
+				
+				switch (job.orderType) {
+				
+				case StoageEvent.INBOUND:
+					moveTP(job);
+				
+					setLoad(true);
+				
+					moveDestination(job);
+				
+					hoistWork();
+				
+					setLoad(false);
+				
+					job.getSlot().setUsed(false);
+				
+					job.getSlot().getBlock().setEmpty(job.getSlot(), false);
+					break;
+				case StoageEvent.OUTBOUND:
+					moveDestination(job);
+					atc.hoistWork();
+					setLoad(true);
+					job.getSlot().getBlock().setEmpty(job.getSlot(), true);
+					job.getSlot().setUsed(false);
+					jobManager = JobManager.getInstance();
+					moveTP(job);
+					
+					atc.hoistWork();
+					setLoad(false);
+				
+					break;
+				case StoageEvent.MOVE:
+					moveDestination(job);
+					break;
+				
+				default:
+					break;
+				}
+				}*/
 
 
-		moveYY.setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
-
-		switch (job.orderType) {
-
-		case StoageEvent.INBOUND:
-			moveTP(job);
-
-			setLoad(true);
-
-			moveDestination(job);
-
-			hoistWork();
-
-			setLoad(false);
-
-			job.getSlot().setUsed(false);
-
-			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
-			break;
-		case StoageEvent.OUTBOUND:
-			moveDestination(job);
-			hoistWork();
-			setLoad(true);
-			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
-			job.getSlot().setUsed(false);
-			jobManager = JobManager.getInstance();
-			moveTP(job);
-			hoistWork();
-			setLoad(false);
-
-			break;
-		case StoageEvent.MOVE:
-			moveDestination(job);
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	private void hoistWork() throws InterruptedException {
-		Thread.sleep(500);
-	}
 
 	/**
 	 * @throws InterruptedException

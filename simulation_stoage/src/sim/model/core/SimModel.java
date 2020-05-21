@@ -20,7 +20,7 @@ public abstract class SimModel implements IFSimModel, Runnable {
 	Logger logger = Logger.getLogger(getClass());
 
 	/**
-	 * �ùķ��̼� �� ����Ʈ
+	 * 占시뮬뤄옙占싱쇽옙 占쏙옙 占쏙옙占쏙옙트
 	 */
 	protected List<SimModel> list;
 
@@ -30,30 +30,31 @@ public abstract class SimModel implements IFSimModel, Runnable {
 	}
 
 	/**
-	 * ����� ����Ʈ
+	 * 占쏙옙占쏙옙占� 占쏙옙占쏙옙트
 	 */
 	protected List<IFMonitor> monitors;
 
 	/**
-	 * �̺�Ʈ �޼���
+	 * 占싱븝옙트 占쌨쇽옙占쏙옙
 	 */
 	protected SimEvent eventMessage;
 
 	/**
-	 * �ùķ��̼� �� ť
+	 * 占시뮬뤄옙占싱쇽옙 占쏙옙 큐
 	 */
 	private SimQueue queue;
 
 	/**
-	 * �ùķ��̼� ������
+	 * 占시뮬뤄옙占싱쇽옙 占쏙옙占쏙옙占쏙옙
 	 */
 	private Thread thread;
 
 	public SimQueue getQueue() {
 		return queue;
 	}
+
 	/**
-	 * �ùķ��̼� �� �̸�
+	 * 占시뮬뤄옙占싱쇽옙 占쏙옙 占싱몌옙
 	 */
 	protected String simName;
 
@@ -100,9 +101,13 @@ public abstract class SimModel implements IFSimModel, Runnable {
 		queue.append(node);
 	}
 
+	public void clear() {
+		list.clear();
+	}
+
 
 	/**
-	 * ����Ϳ��� �޼��� ���� �޼��� ����
+	 * 占쏙옙占쏙옙沽占쏙옙占� 占쌨쇽옙占쏙옙 占쏙옙占쏙옙 占쌨쇽옙占쏙옙 占쏙옙占쏙옙
 	 *
 	 * @param message
 	 */
@@ -110,7 +115,7 @@ public abstract class SimModel implements IFSimModel, Runnable {
 	{
 		Iterator<IFMonitor> iter = monitors.iterator();
 		/*
-		 * TODO �̺�Ʈ ���� ����
+		 * TODO 占싱븝옙트 占쏙옙占쏙옙 占쏙옙占쏙옙
 		 */
 		eventMessage = new SimEvent(0);
 
@@ -126,7 +131,7 @@ public abstract class SimModel implements IFSimModel, Runnable {
 	}
 
 	/**
-	 * ����Ϳ��� �޼��� ���� �޼��� ����
+	 * 占쏙옙占쏙옙沽占쏙옙占� 占쌨쇽옙占쏙옙 占쏙옙占쏙옙 占쌨쇽옙占쏙옙 占쏙옙占쏙옙
 	 *
 	 * @param message
 	 */

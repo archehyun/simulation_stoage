@@ -1,5 +1,6 @@
 package sim.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
@@ -30,7 +31,7 @@ public class SimInfoPanel extends JPanel {
 	}
 
 	private void createView() {
-
+		this.setBackground(Color.black);
 		this.setLayout(new GridLayout(0, 1));
 		equipTable = new EquipTable[3];
 		for (int i = 0; i < BlockManager.block; i++) {

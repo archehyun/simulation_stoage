@@ -77,7 +77,11 @@ public class SimMain {
 		try {
 			NodeList blockList = element.getElementsByTagName("block");
 
-			blockManager.setBlockCount(blockList.getLength());
+			blockManager.block = blockList.getLength();
+
+			System.out.println("bloick size:" + blockManager.block);
+
+			blockManager.blockInit();
 
 			if (blockList.getLength() > 0) {
 				//반복문 이용
@@ -216,6 +220,12 @@ public class SimMain {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void clear() {
+		jobManager.clear();
+		blockManager.clear();
+		canvas.clear();
 	}
 
 

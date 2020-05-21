@@ -92,12 +92,15 @@ public class SimViewBlock extends SimViewObject{
 
 				g.fillRect(xx, yy, ww, hh);
 
+				if (isCountView) {
+
 				g.setColor(Color.black);
 
 				//xx = (int) ((initX + 2 + j * (BlockManager.conW + BlockManager.wGap)) * BlockManager.blockRate);
 				//yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
 
 				g.drawString(blockContainerCount + "", xx - 1, yy + 11);
+				}
 			}
 
 			g.setColor(Color.white);
@@ -130,6 +133,13 @@ public class SimViewBlock extends SimViewObject{
 
 		}
 
+	}
+
+	boolean isCountView;
+
+	@Override
+	public void setCountView(boolean selected) {
+		isCountView = selected;
 	}
 
 }

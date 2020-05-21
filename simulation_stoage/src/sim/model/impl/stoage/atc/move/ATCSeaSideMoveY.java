@@ -84,7 +84,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 			atc.setLoad(true);
 			moveDestination(job);
 
-			workHoist();
+			atc.workHoist();
 			atc.setLoad(false);
 			job.getSlot().setUsed(false);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
@@ -94,14 +94,14 @@ public class ATCSeaSideMoveY extends ATCMove {
 		case StoageEvent.OUTBOUND:
 
 			moveDestination(job);
-			workHoist();
+			atc.workHoist();
 			atc.setLoad(true);
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
 
 			moveTP(job);
-			workHoist();
+			atc.workHoist();
 
 			atc.setLoad(false);
 			atc.arrival();
@@ -117,12 +117,6 @@ public class ATCSeaSideMoveY extends ATCMove {
 
 	}
 
-	private void workHoist() {
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+
 
 }

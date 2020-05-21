@@ -59,15 +59,14 @@ public class ATCLandSideCrossMoveY extends ATCMove {
 		StoageEvent job = (StoageEvent) node;
 		moveTP(job);
 
-		// hoist work
-		Thread.sleep(500);
+		atc.workHoist();
 
 		atc.setLoad(true);
 
 		moveDestination(job);
 
 		// hoist work
-		Thread.sleep(500);
+		atc.workHoist();
 
 		atc.setLoad(false);
 		job.getSlot().setUsed(false);

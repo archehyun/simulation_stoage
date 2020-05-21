@@ -9,6 +9,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -27,13 +29,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.block.BlockManager;
@@ -74,14 +82,21 @@ public class SimFrame extends JFrame implements ActionListener {
 
 	private JMenuItem stopMenuItem;
 
+	private JButton butAuto;
+
+	private JTree tree;
+
+	private JCheckBox cbxCount;
+
 	public SimFrame() {
 		logger.debug("log4j:logger.debug()");
 
+
 		simMain.setCanvas(canvas);
-		simMain.init();
 
 		this.setTitle("Stoage Simualtion");
 		JPanel pnMain = new JPanel(new BorderLayout());
+
 		txfArea = new SimView();
 
 		infoPanel = new SimInfoPanel();
@@ -180,13 +195,18 @@ public class SimFrame extends JFrame implements ActionListener {
 
 		pnEquipList.setBorder(BorderFactory.createTitledBorder("Equip List"));
 		pnEquipList.setPreferredSize(new Dimension(200, 200));
-		JTree tree = new JTree(builtTreeNode(simMain.getRoot()));
+		tree = new JTree(builtTreeNode(simMain.getRoot()));
+
 
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
 		}
 
+		JButton butReload = new JButton("Reload");
+		butReload.addActionListener(this);
 		pnEquipList.add(tree);
+		pnEquipList.add(butReload, BorderLayout.SOUTH);
+
 		return pnEquipList;
 	}
 
@@ -288,6 +308,18 @@ public class SimFrame extends JFrame implements ActionListener {
 
 		pnLeftButtons.add(bOX);
 
+		cbxCount = new JCheckBox("count");
+		cbxCount.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvas.setCountView(cbxCount.isSelected());
+
+			}
+		});
+
+		pnLeftButtons.add(cbxCount);
+
 		butStart = new JToggleButton();
 
 		//JMenuItem
@@ -305,10 +337,16 @@ public class SimFrame extends JFrame implements ActionListener {
 				if (butStart.isSelected()) {
 
 					abstractButton.setText("Stop");
+					butAuto.setEnabled(true);
+					simMain.clear();
+					simMain.createInit();
 					simMain.simulationStart();
 				} else {
 					abstractButton.setText("Start");
+
+					butAuto.setEnabled(false);
 					simMain.simulationStop();
+					simMain.clear();
 				}
 
 			}
@@ -325,8 +363,10 @@ public class SimFrame extends JFrame implements ActionListener {
 			}
 		});
 
-		JButton butAuto = new JButton("Auto");
+		butAuto = new JButton("Auto");
 		butAuto.setMnemonic('A');
+
+		butAuto.setEnabled(false);
 
 		butAuto.addActionListener(this);
 
@@ -374,6 +414,19 @@ public class SimFrame extends JFrame implements ActionListener {
 	}
 
 	public static void main(String[] args) {
+
+		try {
+			// Set cross-platform Java L&F (also called "Metal")
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (UnsupportedLookAndFeelException e) {
+			// handle exception
+		} catch (ClassNotFoundException e) {
+			// handle exception
+		} catch (InstantiationException e) {
+			// handle exception
+		} catch (IllegalAccessException e) {
+			// handle exception
+		}
 
 		new SimFrame();
 
@@ -467,6 +520,8 @@ public class SimFrame extends JFrame implements ActionListener {
 			event.setEventMessage("simstart");
 
 			simMain.append(event);
+
+			butAuto.setEnabled(false);
 		}
 		else if (command.equals("Start")) {
 			if (bOX.isSelected()) {
@@ -486,6 +541,37 @@ public class SimFrame extends JFrame implements ActionListener {
 		else if (command.equals("Exit")) {
 			System.exit(1);
 		}
+		else if (command.equals("Reload")) {
+			try {
+				simMain.parse();
+
+
+				tree.setModel(new MyTreeMode(builtTreeNode(simMain.getRoot())));
+				for (int i = 0; i < tree.getRowCount(); i++) {
+					tree.expandRow(i);
+				}
+			} catch (SAXException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ParserConfigurationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	class MyTreeMode extends DefaultTreeModel {
+
+		public MyTreeMode(TreeNode root) {
+			super(root);
+		}
+
 	}
 
 }

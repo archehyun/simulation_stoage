@@ -76,7 +76,10 @@ public class SimCanvas extends Canvas implements Runnable {
 		main.render();
 
 		Graphics g = bs.getDrawGraphics();
-		g.setColor(new Color(79, 194, 232));
+
+		//g.setColor(new Color(79, 194, 232));
+
+		g.setColor(Color.lightGray);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		//Call your render funtions from here
 
@@ -137,44 +140,45 @@ public class SimCanvas extends Canvas implements Runnable {
 
 	public void tick() {
 	}
-		@Override
-		public void run() {
-			init();
-			//Tick counter variable
-			long lastTime = System.nanoTime();
-			//Nanoseconds per Tick
-			double nsPerTick = 1000000000D/TICKSPERS;
-			frames = 0;
-			ticks = 0;
-			long fpsTimer = System.currentTimeMillis();
-			double delta = 0;
-			boolean shouldRender;
-			while(running){
-				shouldRender = !ISFRAMECAPPED;
-				long now = System.nanoTime();
-				delta += (now - lastTime) / nsPerTick;
-				lastTime = now;
-				//if it should tick it does this
-				while(delta >= 1 ){
-					ticks++;
-					tick();
-					delta -= 1;
-					shouldRender = true;
-				}
-				if (shouldRender){
 
-					render();
-				}
-				if (fpsTimer < System.currentTimeMillis() - 1000){
+	@Override
+	public void run() {
+		init();
+		//Tick counter variable
+		long lastTime = System.nanoTime();
+		//Nanoseconds per Tick
+		double nsPerTick = 1000000000D / TICKSPERS;
+		frames = 0;
+		ticks = 0;
+		long fpsTimer = System.currentTimeMillis();
+		double delta = 0;
+		boolean shouldRender;
+		while (running) {
+			shouldRender = !ISFRAMECAPPED;
+			long now = System.nanoTime();
+			delta += (now - lastTime) / nsPerTick;
+			lastTime = now;
+			//if it should tick it does this
+			while (delta >= 1) {
+				ticks++;
+				tick();
+				delta -= 1;
+				shouldRender = true;
+			}
+			if (shouldRender) {
+
+				render();
+			}
+			if (fpsTimer < System.currentTimeMillis() - 1000) {
 
 				frameInfo = ticks + " ticks, " + frames + " frames";
-					ticks = 0;
-					lastFrames = frames;
-					frames = 0;
-					fpsTimer = System.currentTimeMillis();
-				}
+				ticks = 0;
+				lastFrames = frames;
+				frames = 0;
+				fpsTimer = System.currentTimeMillis();
+			}
 		}
-		}
+	}
 
 	public void addObject(Object obj) {
 		if (obj instanceof TwinSeaSideATC) {
@@ -204,4 +208,21 @@ public class SimCanvas extends Canvas implements Runnable {
 
 	}
 
+	public void clear() {
+		draw.clear();
+
 	}
+
+	boolean isCountView = true;
+	public void setCountView(boolean selected) {
+		//Collections.reverse(draw);
+		List<DrawObject> unmodifiableList = Collections.unmodifiableList(draw);
+
+		//;
+
+		for (DrawObject str : unmodifiableList) {
+			str.setCountView(selected);
+		}
+	}
+
+}

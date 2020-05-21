@@ -8,7 +8,6 @@ import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.manager.ATCJobManager;
 import sim.model.impl.stoage.manager.ATCManager;
-import sim.view.framework.Rectangle;
 import sim.view.framework.SimViewObject;
 
 /**
@@ -19,6 +18,13 @@ import sim.view.framework.SimViewObject;
  *
  */
 public class SimViewATC extends SimViewObject {
+
+	Color ATC_COLOR = Color.white;
+
+	Color TROLLY_COLOR = Color.orange;
+
+	Color BUSY_COLOR = Color.blue;
+
 
 	ATCJobManager manager = null;
 
@@ -37,7 +43,7 @@ public class SimViewATC extends SimViewObject {
 
 
 	/**
-	 * ������
+	 * draw ATC object
 	 *
 	 * @param atcID
 	 * @param blockID
@@ -63,60 +69,77 @@ public class SimViewATC extends SimViewObject {
 		atcH = BlockManager.conH;
 	}
 
+	private void drawATCState(Graphics g)
+	{
+		g.setColor(ATC_COLOR);
+
+		//atc
+		int xx1 = (int) (atc.getInitXpointOnWindows() * BlockManager.blockRate);
+		int yy2 = (int) ((atc.getInitYpointOnWindows() - 2) * BlockManager.blockRate);
+		int ww1 = (int) (atcW * BlockManager.blockRate);
+		g.fillRect(xx1 + 40, yy2, ww1, 5);
+
+		g.fillRect(xx1 + 38, yy2, 2, 15);
+		g.fillRect(xx1 + 40 + ww1, yy2, 2, 15);
+
+		int xx = (int) ((atc.getX()) * BlockManager.blockRate);
+
+		if (atc.isLoad()) {
+			g.setColor(BUSY_COLOR);
+
+		} else {
+			g.setColor(TROLLY_COLOR);
+		}
+		//trolly
+		g.fillRect(xx + 40, (int) ((atc.getInitYpointOnWindows()) * BlockManager.blockRate), 5, 5);
+
+		//hosist
+		if (atc.isHoist()) {
+			g.fillRect(xx + 40, (int) ((atc.getInitYpointOnWindows() - 2) * BlockManager.blockRate) + 5, 5, 25);
+		}
+
+	}
 	@Override
 	public void draw(Graphics g) {
 
 		if(atc!=null)
 		{
-			// �ε� ���� ǥ��
+			drawATC(g);
 
-			if (atc.isLoad()) {
-				g.setColor(Color.BLUE);
+			drawATCState(g);
 
-				/*int xxx = (int) ((atc.getInitXpointOnWindows() + 2 + atc.getX()) * BlockManager.blockRate);
-				int yyy = (int) ((atc.getY() + 2) * BlockManager.blockRate);
-
-				int www = (int) ((trollySizeW - 1) * BlockManager.blockRate);
-				int hhh = (int) ((trollySizeH - 1) * BlockManager.blockRate);
-				g.fillRect(xxx, yyy, www, hhh);*/
-			} else {
-				g.setColor(Color.ORANGE);
-			}
-
-			int xx = (int) ((atc.getX()) * BlockManager.blockRate);
-			int yy = (int) ((atc.getY() - 1) * BlockManager.blockRate);
-
-			int ww = (int) (trollySizeW * BlockManager.blockRate);
-			int hh = (int) (trollySizeH * BlockManager.blockRate);
-			g.fillRect(xx, yy,
-					ww, hh);
-
-
-			/*if(atc.isLoad())
-			{
-				g.setColor(Color.BLUE);
-
-				int xxx = (int) ((atc.getInitXpointOnWindows() + 2 + atc.getX()) * BlockManager.blockRate);
-				int yyy = (int) ((atc.getY() + 2) * BlockManager.blockRate);
-
-				int www = (int) ((trollySizeW - 1) * BlockManager.blockRate);
-				int hhh = (int) ((trollySizeH - 1) * BlockManager.blockRate);
-				g.fillRect(xxx, yyy, www, hhh);
-			}*/
-
-			g.setColor(Color.WHITE);
-
-			int xx1 = (int) (atc.getInitXpointOnWindows() * BlockManager.blockRate);
-			int yy1 = (int) ((atc.getY() - 2) * BlockManager.blockRate);
-			int ww1 = (int) (atcW * BlockManager.blockRate);
-			int hh1 = (int) (atcH * BlockManager.blockRate);
-			g.drawRect(xx1, yy1, ww1, hh1);
-			g.setColor(Color.black);
-			g.drawString(String.valueOf(atc.getAtcID()), xx1 + ww1, yy1 + 10);
-
-			/*g.setColor(Col or.BLACK);
-			g.drawString(atc.getSimName(), atc.getInitX()+3, atc.getInitY()+atc.getY()+11);*/
 		}
+	}
+
+	private void drawATC(Graphics g) {
+		if (atc.isLoad()) {
+			g.setColor(BUSY_COLOR);
+
+
+		} else {
+			g.setColor(TROLLY_COLOR);
+		}
+
+		int xx = (int) ((atc.getX()) * BlockManager.blockRate);
+		int yy = (int) ((atc.getY() - 1) * BlockManager.blockRate);
+
+		int ww = (int) (trollySizeW * BlockManager.blockRate);
+		int hh = (int) (trollySizeH * BlockManager.blockRate);
+		g.fillRect(xx, yy, ww, hh);
+
+
+
+		g.setColor(Color.WHITE);
+
+		int xx1 = (int) (atc.getInitXpointOnWindows() * BlockManager.blockRate);
+		int yy1 = (int) ((atc.getY() - 2) * BlockManager.blockRate);
+		int ww1 = (int) (atcW * BlockManager.blockRate);
+		int hh1 = (int) (atcH * BlockManager.blockRate);
+		g.drawRect(xx1, yy1, ww1, hh1);
+
+
+		g.setColor(Color.black);
+		g.drawString(String.valueOf(atc.getAtcID()), xx1 + ww1, yy1 + 10);
 	}
 
 	@Override
@@ -125,11 +148,11 @@ public class SimViewATC extends SimViewObject {
 
 	}
 
-	public boolean overlapRectangles(Rectangle r1, Rectangle r2) {
-		if (r1.lowerLeft.x < r2.lowerLeft.x + r2.width && r1.lowerLeft.x + r1.width > r2.lowerLeft.x && r1.lowerLeft.y < r2.lowerLeft.y + r2.height && r1.lowerLeft.y + r1.height > r2.lowerLeft.y)
-			return true;
-		else
-			return false;
+	boolean isCountView = true;
+
+	@Override
+	public void setCountView(boolean selected) {
+		isCountView = selected;
 	}
 
 }

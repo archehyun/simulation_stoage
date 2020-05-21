@@ -346,11 +346,26 @@ public abstract class SimATC extends SimModel {
 
 	}
 
+	boolean hoist = false;
+
+	public boolean isHoist() {
+		return hoist;
+	}
 	/**
 	 *
 	 */
-	public void workTrolly() {
-		// TODO trolly work develep
+	public void workHoist() {
+
+		try {
+
+			hoist = true;
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		hoist = false;
+
 	}
 
 	/**

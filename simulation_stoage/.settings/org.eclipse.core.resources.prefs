@@ -1,7 +1,9 @@
 eclipse.preferences.version=1
 encoding//src/sim/model/core/SimEvent.java=UTF-8
+encoding//src/sim/model/core/SimModel.java=UTF-8
 encoding//src/sim/model/impl/stoage/atc/SimATC.java=UTF-8
 encoding//src/sim/model/impl/stoage/atc/impl/CrossLandSideATC.java=UTF-8
 encoding//src/sim/model/impl/stoage/atc/impl/TwinLandSideATC.java=UTF-8
 encoding//src/sim/view/SimFrame.java=UTF-8
 encoding//src/sim/view/SimMain.java=UTF-8
+encoding//src/sim/view/framework/SimViewObject.java=UTF-8

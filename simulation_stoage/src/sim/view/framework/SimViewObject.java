@@ -3,29 +3,29 @@ package sim.view.framework;
 import map.cavas.DrawObject;
 
 /**
- * �̹��� ǥ�� Ŭ����
+ * 占싱뱄옙占쏙옙 표占쏙옙 클占쏙옙占쏙옙
  *
  * @author LDCC
  *
  */
 public abstract class SimViewObject implements DrawObject, IFMonitor {
 
-	//��ü ��ġ
+	//location view object
 	public final Vector2 position;
 
 	//
 	private int simID;
 
-	// x y ��ġ
+	// x y initition location
 	public float initX, initY;
 
-	// ��ü ���
+	// 占쏙옙체 占쏙옙占�
 	public final Rectangle bounds;
 
-	// ǥ�� ����
+	// 표占쏙옙 占쏙옙占쏙옙
 
 	/**
-	 * ǥ�ú���
+	 * 표占시븝옙占쏙옙
 	 *
 	 * @DEFAULT 100
 	 */
