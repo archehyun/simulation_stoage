@@ -47,8 +47,6 @@ public class SimMain {
 
 	}
 
-
-
 	public void setCanvas(SimCanvas canvas) {
 		this.canvas = canvas;
 	}
@@ -59,19 +57,24 @@ public class SimMain {
 
 	JobManager jobManager = JobManager.getInstance();
 
+	private Element element;
+
 	static BlockManager blockManager = BlockManager.getInstance();
 
-	public void paraseInit()
+	public void parse() throws SAXException, IOException, URISyntaxException, ParserConfigurationException {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		Document xml = null;
+
+		xml = documentBuilder.parse(ClassLoader.getSystemResource("layout/layout.xml").toURI().toString());
+
+		element = xml.getDocumentElement();
+
+	}
+
+	public void createInit()
 	{
 		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document xml = null;
-			//XML DOCUMENT 획득
-
-			xml = documentBuilder.parse(ClassLoader.getSystemResource("layout/layout.xml").toURI().toString());
-
-			Element element = xml.getDocumentElement();
 			NodeList blockList = element.getElementsByTagName("block");
 
 			blockManager.setBlockCount(blockList.getLength());
@@ -100,9 +103,6 @@ public class SimMain {
 					}
 				}
 			}
-
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -182,7 +182,7 @@ public class SimMain {
 			canvas.addObject(atc1);
 			canvas.addObject(atc2);
 		}*/
-		paraseInit();
+		createInit();
 
 
 	}
@@ -209,7 +209,12 @@ public class SimMain {
 	}
 
 	public SimMain() {
-
+		try {
+			parse();
+		} catch (SAXException | IOException | URISyntaxException | ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -236,6 +241,11 @@ public class SimMain {
 
 	public void putCommand(String command) throws ArrayIndexOutOfBoundsException, UnparserableCommandException {
 		jobManager.putCommand(command);
+	}
+
+	public Node getRoot() {
+		// TODO Auto-generated method stub
+		return element;
 	}
 
 }

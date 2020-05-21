@@ -29,8 +29,11 @@ import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCJobManager;
@@ -43,8 +46,6 @@ import sim.view.framework.SimCanvas;
 public class SimFrame extends JFrame implements ActionListener {
 
 	protected static Logger logger = Logger.getLogger(SimFrame.class.getName());
-
-	//ATCJobManager atcManager2 = CrossOverJobManager.getInstance();
 
 	ATCManager atcManager = ATCManager.getInstance();
 
@@ -154,13 +155,37 @@ public class SimFrame extends JFrame implements ActionListener {
 		jobManager.addMonitor(txfArea);
 	}
 
+	private DefaultMutableTreeNode builtTreeNode(Node root) {
+		DefaultMutableTreeNode dmtNode;
+
+		dmtNode = new DefaultMutableTreeNode(root.getNodeName());
+		NodeList nodeList = root.getChildNodes();
+		for (int count = 0; count < nodeList.getLength(); count++) {
+			Node tempNode = nodeList.item(count);
+
+			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+				if (tempNode.hasChildNodes()) {
+					dmtNode.add(builtTreeNode(tempNode));
+				}
+			}
+		}
+		return dmtNode;
+	}
+
+	/**
+	 * @return
+	 */
 	private JPanel buildEquipList() {
 		JPanel pnEquipList = new JPanel(new BorderLayout());
 
 		pnEquipList.setBorder(BorderFactory.createTitledBorder("Equip List"));
 		pnEquipList.setPreferredSize(new Dimension(200, 200));
+		JTree tree = new JTree(builtTreeNode(simMain.getRoot()));
 
-		JTree tree = new JTree();
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
+		}
+
 		pnEquipList.add(tree);
 		return pnEquipList;
 	}
@@ -216,8 +241,6 @@ public class SimFrame extends JFrame implements ActionListener {
 
 	private JMenuBar createMenuBar()
 	{
-
-
 		JMenuBar bar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
