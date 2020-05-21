@@ -1,4 +1,4 @@
-package sim.model.impl.stoage.atc.crossover;
+package sim.model.impl.stoage.atc.impl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -8,9 +8,8 @@ import sim.model.core.SimModel;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCLandSideMoveY;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
-import sim.model.impl.stoage.commom.BlockManager;
-import sim.model.impl.stoage.commom.JobManager;
-import sim.model.impl.stoage.commom.Slot;
+import sim.model.impl.stoage.block.BlockManager;
+import sim.model.impl.stoage.block.Slot;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
 
@@ -19,18 +18,16 @@ import sim.model.queue.SimNode;
  * @author LDCC
  *
  */
-public class CrossATCLandSide extends SimATC {
+public class CrossLandSideATC extends SimATC {
 
 	MyTimer time;
 
-	public CrossATCLandSide(String simName, int atcID, int blockID, float x, float y, float width, float height) {
+	public CrossLandSideATC(String simName, int atcID, int blockID, float x, float y, float width, float height) {
 		super(simName, atcID, blockID, x, y, width, height);
 		moveXX = new ATCMoveX(simName + "_x", this);
 		moveYY = new ATCLandSideMoveY(simName + "_y", this);
 
 		time = new MyTimer("");
-
-
 
 		notifyMonitor("create landSide atc:" + atcID);
 
@@ -40,7 +37,7 @@ public class CrossATCLandSide extends SimATC {
 
 		   @Override
 		public void run() {
-			if (lastX == CrossATCLandSide.this.getX())
+			if (lastX == CrossLandSideATC.this.getX())
 			{
 				StoageEvent node = new StoageEvent(0, SimEvent.COMMAND);
 				Slot slot = blockManager.getSlot(0, 24, 1, 1);
@@ -53,7 +50,7 @@ public class CrossATCLandSide extends SimATC {
 				node.setX(1);
 
 				node.setY(25);
-				CrossATCLandSide.this.append(node);
+				CrossLandSideATC.this.append(node);
 			}
 		   }
 	}
@@ -73,8 +70,8 @@ public class CrossATCLandSide extends SimATC {
 	/**
 	 * @param node
 	 * @throws InterruptedException
-	 */
-	public void work(SimNode node) throws InterruptedException {
+	 *//*
+		public void work(SimNode node) throws InterruptedException {
 		StoageEvent job = (StoageEvent) node;
 
 		moveYY.setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
@@ -82,7 +79,7 @@ public class CrossATCLandSide extends SimATC {
 		switch (job.orderType) {
 
 		case StoageEvent.INBOUND:
-			jobManager.release();
+			jobManager.release("crossLand");
 			moveTP(job);
 
 			setLoad(true);
@@ -97,9 +94,11 @@ public class CrossATCLandSide extends SimATC {
 
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
+
+
 			break;
 		case StoageEvent.OUTBOUND:
-			jobManager.release();
+			jobManager.release("crossLand");
 			moveDestination(job);
 			hoistWork();
 			setLoad(true);
@@ -109,6 +108,7 @@ public class CrossATCLandSide extends SimATC {
 			moveTP(job);
 			hoistWork();
 			setLoad(false);
+
 			break;
 		case StoageEvent.MOVE:
 			moveDestination(job);
@@ -117,15 +117,13 @@ public class CrossATCLandSide extends SimATC {
 		default:
 			break;
 		}
-	}
-
+		}
+		*/
 	@Override
 	public void updateInitLocationOnWinddows(int blockID) {
 		initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
 
 		initPosition.y = getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH;
-
-		//position.y = initPosition.y;
 
 	}
 
@@ -160,6 +158,8 @@ public class CrossATCLandSide extends SimATC {
 		lastX = this.getX();
 		//time.schedule( 5000);
 
+		//System.out.println("");
+
 
 
 	}
@@ -182,9 +182,9 @@ public class CrossATCLandSide extends SimATC {
 	@Override
 	public synchronized void plusY() throws InterruptedException {
 
-		if (!atcJobManager.overlapRectangles(this)) {
+		/*if (!atcJobManager.overlapRectangles(this)) {
 			atcJobManager.setMove(true);
-		}
+		}*/
 
 		super.plusY();
 	}
@@ -196,9 +196,9 @@ public class CrossATCLandSide extends SimATC {
 	@Override
 	public synchronized void minusY() throws InterruptedException {
 
-		if (!atcJobManager.overlapRectangles(this)) {
+		/*if (!atcJobManager.overlapRectangles(this)) {
 			atcJobManager.setMove(true);
-		}
+		}*/
 
 		super.minusY();
 	}
@@ -224,8 +224,14 @@ public class CrossATCLandSide extends SimATC {
 		//System.out.println("process:" + event.orderType);
 		moveXX.append(node);
 		moveYY.append(node);
-		setBusy();
-		jobManager.release();
+		//setBusy();
+		/*try {
+			work(node);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		//moveYY.append(node);
 
 		notifyMonitor("land:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
 

@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
-import sim.model.impl.stoage.atc.twin.ATCManager;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
+import sim.model.impl.stoage.manager.ATCJobManager;
+import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.Rectangle;
 import sim.view.framework.SimViewObject;
 
@@ -111,6 +111,8 @@ public class SimViewATC extends SimViewObject {
 			int ww1 = (int) (atcW * BlockManager.blockRate);
 			int hh1 = (int) (atcH * BlockManager.blockRate);
 			g.drawRect(xx1, yy1, ww1, hh1);
+			g.setColor(Color.black);
+			g.drawString(String.valueOf(atc.getAtcID()), xx1 + ww1, yy1 + 10);
 
 			/*g.setColor(Col or.BLACK);
 			g.drawString(atc.getSimName(), atc.getInitX()+3, atc.getInitY()+atc.getY()+11);*/

@@ -1,12 +1,12 @@
-package sim.model.impl.stoage.atc.twin;
+package sim.model.impl.stoage.manager;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
-import sim.model.impl.stoage.atc.crossover.CrossOverJobManager;
+import sim.model.impl.stoage.manager.impl.CrossOverJobManager;
+import sim.model.impl.stoage.manager.impl.TwinJobManager;
 import sim.view.EquipTable;
 
 public class ATCManager {

@@ -1,4 +1,4 @@
-package sim.model.impl.stoage.commom;
+package sim.model.impl.stoage.block;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModelManager;

@@ -3,11 +3,12 @@ package sim.model.impl.stoage.atc;
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
 import sim.model.impl.stoage.atc.move.ATCMove;
-import sim.model.impl.stoage.atc.twin.ATCManager;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
-import sim.view.Vector2;
+import sim.model.impl.stoage.manager.ATCJobManager;
+import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.Rectangle;
+import sim.view.framework.Vector2;
 
 /**
  * @author archehyun
@@ -178,6 +179,12 @@ public abstract class SimATC extends SimModel {
 
 			notify();
 		}
+	}
+
+	public synchronized void arrival() {
+		this.isIdle = true;
+
+		notify();
 	}
 
 
@@ -360,7 +367,7 @@ public abstract class SimATC extends SimModel {
 
 	public void plusWorkCount() {
 		workCount++;
-
+		System.out.println("update act");
 		SimEvent event = new SimEvent();
 		event.add("type", "block");
 		blockManager.notifyMonitor(event);

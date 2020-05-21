@@ -1,6 +1,7 @@
 package sim.model.impl.stoage.commom;
 
 import sim.model.core.SimEvent;
+import sim.model.impl.stoage.block.Slot;
 
 public class StoageEvent extends SimEvent{
 

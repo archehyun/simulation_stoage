@@ -1,32 +1,31 @@
 package sim.view.framework;
 
 import map.cavas.DrawObject;
-import sim.view.Vector2;
 
 /**
- * ÀÌ¹ÌÁö Ç¥½Ã Å¬·¡½º
+ * ï¿½Ì¹ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
  *
  * @author LDCC
  *
  */
 public abstract class SimViewObject implements DrawObject, IFMonitor {
 
-	//°´Ã¼ À§Ä¡
+	//ï¿½ï¿½Ã¼ ï¿½ï¿½Ä¡
 	public final Vector2 position;
 
 	//
 	private int simID;
 
-	// x y À§Ä¡
+	// x y ï¿½ï¿½Ä¡
 	public float initX, initY;
 
-	// °´Ã¼ °æ°è
+	// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½
 	public final Rectangle bounds;
 
-	// Ç¥½Ã ºñÀ²
+	// Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	/**
-	 * Ç¥½ÃºñÀ²
+	 * Ç¥ï¿½Ãºï¿½ï¿½ï¿½
 	 *
 	 * @DEFAULT 100
 	 */

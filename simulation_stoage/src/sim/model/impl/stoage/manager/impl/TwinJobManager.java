@@ -1,4 +1,4 @@
-package sim.model.impl.stoage.atc.crossover;
+package sim.model.impl.stoage.manager.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -6,37 +6,21 @@ import java.util.List;
 
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
-import sim.model.impl.stoage.atc.ATCJobManager;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.commom.StoageEvent;
+import sim.model.impl.stoage.manager.ATCJobManager;
 import sim.model.queue.SimNode;
 
 /**
- *
- * cross over type atc manager
- * @author LDCC
+ * @author 박창현
  *
  */
-public class CrossOverJobManager extends ATCJobManager {
+public class TwinJobManager extends ATCJobManager {
 
-	public CrossOverJobManager(String simName) {
+	public TwinJobManager(String simName) {
 		super(simName);
 	}
-	
-	/*
-		private static CrossOverJobManager instance;
 
-
-
-		public static ATCJobManager getInstance() {
-			if (instance == null)
-				instance = new CrossOverJobManager("atcManager");
-			return instance;
-		}
-	*/
-	/**
-	 * @param event
-	 */
 	private void commandProcess(SimEvent event) {
 
 		Iterator<SimModel> iter = list.iterator();
@@ -57,16 +41,14 @@ public class CrossOverJobManager extends ATCJobManager {
 
 				StoageEvent ee = (StoageEvent) event;
 
-				ee.orderType = StoageEvent.MOVE;
-				int blockId = ((StoageEvent) event).getSlot().getBlock().getBlockID();
-
+				int blockId = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
 
 				if ((model.getAtcID() % 100) == blockId) {
 
 					if (model.getAtcID() == ee.getATCID()) {
-
+						ee.orderType = StoageEvent.MOVE;
 						model.append(ee);
-						logger.debug("append atc order:" + event.getSimName());
+						logger.debug("append atc order:" + atcJob.getSimName());
 					}
 				}
 			}
@@ -75,27 +57,8 @@ public class CrossOverJobManager extends ATCJobManager {
 		default:
 			break;
 		}
-	}
-
-	private void orderProcess(SimEvent atcJob) {
-		//	atcJob = (SimEvent) node;
-
-
-
-		atcJob.add("atc", list);
-
-
-
-		int blockID = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
-		//divied(blockID, atcJob);
-		minWorkACT(blockID, atcJob);
-
-		if (atcJob == null)
-			System.err.println("error");
-		this.notifyMonitor(atcJob);
 
 	}
-
 	//SimEvent atcJob;
 
 	private void divied(int blockID, SimEvent atcJob) {
@@ -124,6 +87,50 @@ public class CrossOverJobManager extends ATCJobManager {
 		}
 	}
 
+	public void minWorkACT(int blockID, SimEvent atcJob) {
+
+		Iterator<SimModel> iter = list.iterator();
+
+		List<SimATC> li = new LinkedList<SimATC>();
+
+		while (iter.hasNext()) {
+			SimATC model = (SimATC) iter.next();
+			if ((model.getAtcID() % 100) == blockID) {
+				li.add(model);
+			}
+		}
+
+		SimATC first = li.get(0);
+		for (int i = 1; i < li.size(); i++) {
+			SimATC temp = li.get(i);
+			if (first.getWorkCount() > temp.getWorkCount()) {
+				first = temp;
+			}
+		}
+
+		first.append(atcJob);
+	}
+
+	private void orderProcess(SimEvent atcJob) {
+
+
+		atcJob.add("atc", list);
+
+
+
+		int blockID = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+		//divied(blockID, atcJob);
+		minWorkACT(blockID, atcJob);
+
+		if (atcJob == null)
+			System.err.println("error");
+		this.notifyMonitor(atcJob);
+
+	}
+
+
+	SimEvent atcJob;
+
 	//
 	@Override
 	public void process(SimNode node) {
@@ -131,7 +138,6 @@ public class CrossOverJobManager extends ATCJobManager {
 		//		this.node = node;
 
 		SimEvent event = (SimEvent) node;
-
 		switch (event.getEventType()) {
 
 		case SimEvent.COMMAND:
@@ -147,39 +153,10 @@ public class CrossOverJobManager extends ATCJobManager {
 
 	}
 
-
-
-	public void minWorkACT(int blockID, SimEvent atcJob) {
-
-		Iterator<SimModel> iter = list.iterator();
-
-		List<SimATC> li = new LinkedList<SimATC>();
-
-		while (iter.hasNext()) {
-			SimATC model = (SimATC) iter.next();
-			if ((model.getAtcID() % 100) == blockID) {
-				li.add(model);
-			}
-		}
-
-
-		SimATC first = li.get(0);
-		for (int i = 1; i < li.size(); i++) {
-			SimATC temp = li.get(i);
-			if (first.getWorkCount() > temp.getWorkCount()) {
-				first = temp;
-			}
-		}
-		System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
-		first.append(atcJob);
-	}
-
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return "cross";
+		return "twin";
 	}
-
-
 
 }

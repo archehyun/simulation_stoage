@@ -36,11 +36,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import sim.model.core.SimEvent;
-import sim.model.impl.stoage.atc.ATCJobManager;
-import sim.model.impl.stoage.atc.twin.ATCManager;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.UnparserableCommandException;
+import sim.model.impl.stoage.manager.ATCJobManager;
+import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.SimCanvas;
 
 public class SimFrame extends JFrame implements ActionListener {

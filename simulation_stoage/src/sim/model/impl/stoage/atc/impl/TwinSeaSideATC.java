@@ -1,11 +1,11 @@
-package sim.model.impl.stoage.atc.twin;
+package sim.model.impl.stoage.atc.impl;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.ATCCommander;
 import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.atc.move.ATCMoveX;
 import sim.model.impl.stoage.atc.move.ATCSeaSideMoveY;
-import sim.model.impl.stoage.commom.BlockManager;
+import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
@@ -107,7 +107,7 @@ public class TwinSeaSideATC extends SimATC {
 
 			job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 
-			jobManager.release();
+			jobManager.release("twinSea");
 			plusWorkCount();
 			break;
 		case StoageEvent.OUTBOUND:
@@ -119,7 +119,7 @@ public class TwinSeaSideATC extends SimATC {
 			job.getSlot().getBlock().setEmpty(job.getSlot(), true);
 			job.getSlot().setUsed(false);
 			jobManager = JobManager.getInstance();
-			jobManager.release();
+			jobManager.release("twinLand");
 			moveTP(job);
 			hoistWork();
 			setLoad(false);
