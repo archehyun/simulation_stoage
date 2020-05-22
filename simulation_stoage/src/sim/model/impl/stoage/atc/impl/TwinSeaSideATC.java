@@ -17,8 +17,8 @@ import sim.model.queue.SimNode;
 public class TwinSeaSideATC extends SimATC {
 
 
-	public TwinSeaSideATC(String simName, int atcID, int blockID, float row, float bay, float width, float height) {
-		super(simName, atcID, blockID, row, bay, width, height);
+	public TwinSeaSideATC(String simName, int atcID, int blockID, float row, float bay, float width, float height, int type) {
+		super(simName, atcID, blockID, row, bay, width, height, type);
 		moveXX = new ATCMoveX(simName + "_x", this);
 
 		moveYY = new ATCSeaSideMoveY(simName + "_y", this);

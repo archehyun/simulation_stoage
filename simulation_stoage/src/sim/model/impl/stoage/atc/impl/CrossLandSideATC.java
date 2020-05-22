@@ -22,8 +22,8 @@ public class CrossLandSideATC extends SimATC {
 
 	MyTimer time;
 
-	public CrossLandSideATC(String simName, int atcID, int blockID, float x, float y, float width, float height) {
-		super(simName, atcID, blockID, x, y, width, height);
+	public CrossLandSideATC(String simName, int atcID, int blockID, float x, float y, float width, float height, int type) {
+		super(simName, atcID, blockID, x, y, width, height, type);
 		moveXX = new ATCMoveX(simName + "_x", this);
 		moveYY = new ATCLandSideMoveY(simName + "_y", this);
 

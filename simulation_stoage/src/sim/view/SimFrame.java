@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -31,8 +33,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -45,19 +45,17 @@ import org.xml.sax.SAXException;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.block.BlockManager;
-import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.commom.UnparserableCommandException;
 import sim.model.impl.stoage.manager.ATCJobManager;
-import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.SimCanvas;
 
 public class SimFrame extends JFrame implements ActionListener {
 
 	protected static Logger logger = Logger.getLogger(SimFrame.class.getName());
 
-	ATCManager atcManager = ATCManager.getInstance();
+	//ATCManager atcManager = ATCManager.getInstance();
 
-	JobManager jobManager = JobManager.getInstance();
+	//JobManager jobManager = JobManager.getInstance();
 
 	OptionDialog optionDialog;
 
@@ -88,6 +86,8 @@ public class SimFrame extends JFrame implements ActionListener {
 
 	private JCheckBox cbxCount;
 
+	private JButton butNext;
+
 	public SimFrame() {
 		logger.debug("log4j:logger.debug()");
 
@@ -95,6 +95,7 @@ public class SimFrame extends JFrame implements ActionListener {
 		simMain.setCanvas(canvas);
 
 		this.setTitle("Stoage Simualtion");
+
 		JPanel pnMain = new JPanel(new BorderLayout());
 
 		txfArea = new SimView();
@@ -167,7 +168,7 @@ public class SimFrame extends JFrame implements ActionListener {
 		setAlwaysOnTop(true);
 
 		//atcManager2.addMonitor(txfArea);
-		jobManager.addMonitor(txfArea);
+		//jobManager.addMonitor(txfArea);
 	}
 
 	private DefaultMutableTreeNode builtTreeNode(Node root) {
@@ -327,17 +328,18 @@ public class SimFrame extends JFrame implements ActionListener {
 		                  ('N',InputEvent.CTRL_MASK)); //Ctrl+N
 		 */
 
-		butStart.addChangeListener(new ChangeListener() {
+		butStart.addItemListener(new ItemListener() {
 
 			@Override
-			public void stateChanged(ChangeEvent e) {
+			public void itemStateChanged(ItemEvent e) {
 				AbstractButton abstractButton = (AbstractButton) e.getSource();
 				abstractButton.getModel();
 
-				if (butStart.isSelected()) {
+				if (abstractButton.isSelected()) {
 
 					abstractButton.setText("Stop");
 					butAuto.setEnabled(true);
+					butNext.setEnabled(true);
 					simMain.clear();
 					simMain.createInit();
 					simMain.simulationStart();
@@ -345,12 +347,15 @@ public class SimFrame extends JFrame implements ActionListener {
 					abstractButton.setText("Start");
 
 					butAuto.setEnabled(false);
+					butNext.setEnabled(false);
 					simMain.simulationStop();
 					simMain.clear();
 				}
 
+
 			}
 		});
+
 
 		butStart.setText("Start");
 		butStart.addActionListener(new ActionListener() {
@@ -370,7 +375,11 @@ public class SimFrame extends JFrame implements ActionListener {
 
 		butAuto.addActionListener(this);
 
-		JButton butNext = new JButton("Next");
+
+		butNext = new JButton("Next");
+		butNext.setMnemonic('N');
+
+		butNext.setEnabled(false);
 
 		butNext.addActionListener(new ActionListener() {
 
@@ -448,18 +457,17 @@ public class SimFrame extends JFrame implements ActionListener {
 		}
 
 		private void createAndView() {
+
+			this.setTitle("ATC Update");
 			JPanel pnMain = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			JButton butSave = new JButton("Save");
 			butSave.setMnemonic('S');
 			butSave.addActionListener(OptionDialog.this);
-			JButton butClose = new JButton("Close");
-			butClose.addActionListener(OptionDialog.this);
-			butClose.setMnemonic('C');
 			txfATCSpeed = new JTextField(10);
 			pnMain.add(new JLabel("ATC Speed: "));
 			pnMain.add(txfATCSpeed);
 			pnMain.add(butSave);
-			pnMain.add(butClose);
+
 			this.setModal(true);
 
 			txfATCSpeed.setText(String.valueOf(ATCJobManager.SPEED));
@@ -482,15 +490,13 @@ public class SimFrame extends JFrame implements ActionListener {
 				String strSpeed = txfATCSpeed.getText();
 
 				try {
+
 					int speed = Integer.parseInt(strSpeed);
-					SimEvent event = new SimEvent(0, SimEvent.COMMAND);
-					event.setCommandType(SimEvent.COMMAND_UPDATE_SPEED);
 
-					event.add("speed", speed);
+					simMain.updateATCSpeed(speed);
 
-					atcManager.append(event);
-
-					ATCJobManager.SPEED = speed;
+					setVisible(false);
+					this.dispose();
 
 				} catch (NumberFormatException ee) {
 					txfATCSpeed.setText(String.valueOf(ATCJobManager.SPEED));
@@ -500,11 +506,7 @@ public class SimFrame extends JFrame implements ActionListener {
 
 
 
-			} else if (command.equals("Close")) {
-				setVisible(false);
-				this.dispose();
 			}
-
 		}
 
 	}
@@ -522,12 +524,14 @@ public class SimFrame extends JFrame implements ActionListener {
 			simMain.append(event);
 
 			butAuto.setEnabled(false);
+			butNext.setEnabled(false);
 		}
 		else if (command.equals("Start")) {
 			if (bOX.isSelected()) {
 				simMain.blockInit();
 			}
 			butStart.setSelected(true);
+			butNext.setEnabled(true);
 			JMenuItem item = (JMenuItem) e.getSource();
 			item.setEnabled(false);
 			stopMenuItem.setEnabled(true);
@@ -565,6 +569,7 @@ public class SimFrame extends JFrame implements ActionListener {
 			}
 		}
 	}
+
 
 	class MyTreeMode extends DefaultTreeModel {
 

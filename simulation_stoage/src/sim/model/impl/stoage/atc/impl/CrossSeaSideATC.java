@@ -13,8 +13,8 @@ public class CrossSeaSideATC extends SimATC {
 
 
 
-	public CrossSeaSideATC(String simName, int atcID, int blockID, float row, float bay, float width, float height) {
-		super(simName, atcID, blockID, row, bay, width, height);
+	public CrossSeaSideATC(String simName, int atcID, int blockID, float row, float bay, float width, float height, int type) {
+		super(simName, atcID, blockID, row, bay, width, height, type);
 
 		moveXX = new ATCMoveX(simName + "_x", this);
 
@@ -84,25 +84,25 @@ public class CrossSeaSideATC extends SimATC {
 			*//*
 				public void work(SimNode node) throws InterruptedException {
 				StoageEvent job = (StoageEvent) node;
-				
-				
+
+
 				moveYY.setDestination((BlockManager.conH + BlockManager.hGap) * job.getY());
-				
+
 				switch (job.orderType) {
-				
+
 				case StoageEvent.INBOUND:
 					moveTP(job);
-				
+
 					setLoad(true);
-				
+
 					moveDestination(job);
-				
+
 					hoistWork();
-				
+
 					setLoad(false);
-				
+
 					job.getSlot().setUsed(false);
-				
+
 					job.getSlot().getBlock().setEmpty(job.getSlot(), false);
 					break;
 				case StoageEvent.OUTBOUND:
@@ -113,15 +113,15 @@ public class CrossSeaSideATC extends SimATC {
 					job.getSlot().setUsed(false);
 					jobManager = JobManager.getInstance();
 					moveTP(job);
-					
+
 					atc.hoistWork();
 					setLoad(false);
-				
+
 					break;
 				case StoageEvent.MOVE:
 					moveDestination(job);
 					break;
-				
+
 				default:
 					break;
 				}

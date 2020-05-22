@@ -40,5 +40,6 @@ public abstract class SimViewObject implements DrawObject, IFMonitor {
 		this.bounds = new Rectangle((int) (initX - width / 2), (int) (initY - height / 2), (int) width, (int) height);
 	}
 
+	public abstract void setCountView(boolean selected);
 
 }

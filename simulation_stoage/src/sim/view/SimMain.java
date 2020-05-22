@@ -52,6 +52,7 @@ public class SimMain {
 	}
 
 	ATCManager atcManagerImpl = ATCManager.getInstance();
+
 	ATCJobManager atcManager;
 
 
@@ -125,9 +126,9 @@ public class SimMain {
 		SimATC atc = null;
 		if (atcManager.getType().equals("cross")) {
 			if (type.equals("sea")) {
-				atc = new CrossSeaSideATC("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
+				atc = new CrossSeaSideATC("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_SEA);
 			} else if (type.equals("land")) {
-				atc = new CrossLandSideATC("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
+				atc = new CrossLandSideATC("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_LAND);
 			}
 		}
 		atc.setInitBlockLocation(Integer.parseInt(initLocation.getAttribute("row")), Integer.parseInt(initLocation.getAttribute("bay")));
@@ -162,32 +163,7 @@ public class SimMain {
 	 */
 	public void init()
 	{
-		/*// block init
-		for (int blockID = 0; blockID < BlockManager.block; blockID++) {
-			Block blocks = blockManager.getBlock(blockID);
-			blocks.setLocation(blockID * BlockManager.BLOCK_GAP + BlockManager.magin, BlockManager.magin);
-			canvas.addObject(blocks);
-
-		}
-
-		// ATC Init
-		for (int blockID = 0; blockID < BlockManager.block; blockID++) {
-			SimATC atc1 = new CrossATCSeaSide("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
-			atc1.setInitBlockLocation(0, 0);
-			atc1.setSpeed(ATCJobManager.SPEED);
-
-			SimATC atc2 = new CrossATCLandSide("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH);
-			atc2.setInitBlockLocation(0, 25);
-			atc2.setSpeed(ATCJobManager.SPEED);
-
-			atcManager1.addSimModel(atc1);
-			atcManager1.addSimModel(atc2);
-
-			canvas.addObject(atc1);
-			canvas.addObject(atc2);
-		}*/
 		createInit();
-
 
 	}
 
@@ -235,8 +211,6 @@ public class SimMain {
 		SimEvent event = new SimEvent();
 		event.add("type", "block");
 		blockManager.notifyMonitor(event);
-
-
 	}
 
 	public void putOrder() {
@@ -256,6 +230,19 @@ public class SimMain {
 	public Node getRoot() {
 		// TODO Auto-generated method stub
 		return element;
+	}
+
+	public void updateATCSpeed(int speed) {
+		SimEvent event = new SimEvent(0, SimEvent.COMMAND);
+		event.setCommandType(SimEvent.COMMAND_UPDATE_SPEED);
+
+		event.add("speed", speed);
+
+		ATCJobManager.SPEED = speed;
+		atcManagerImpl.append(event);
+
+
+
 	}
 
 }

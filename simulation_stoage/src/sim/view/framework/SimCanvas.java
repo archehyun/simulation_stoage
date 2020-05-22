@@ -221,7 +221,7 @@ public class SimCanvas extends Canvas implements Runnable {
 		//;
 
 		for (DrawObject str : unmodifiableList) {
-			str.setCountView(selected);
+			((SimViewObject) str).setCountView(selected);
 		}
 	}
 

@@ -16,11 +16,25 @@ import sim.view.framework.Vector2;
  */
 public abstract class SimATC extends SimModel {
 
+	public static final int TYPE_LAND = 1;
+
+	public static final int TYPE_SEA = 2;
+
+	private int locationType;
+
+	public int getLocationType() {
+		return locationType;
+	}
+
+	public void setLocationType(int locationType) {
+		this.locationType = locationType;
+	}
+
 	ATCManager atcManager = ATCManager.getInstance();
 
 	protected ATCJobManager atcJobManager;
 
-	//占쏙옙체 占쏙옙치
+	//ATC Loation Position;
 	public final Vector2 position;
 
 	//占쏙옙체 占쏙옙치
@@ -107,7 +121,6 @@ public abstract class SimATC extends SimModel {
 	 */
 	public void setInitBlockLocation(float initX, float initY)
 	{
-
 		this.setInitX(initX);
 		this.setInitY(initY);
 	}
@@ -212,11 +225,12 @@ public abstract class SimATC extends SimModel {
 		notify();
 	}
 
-	public SimATC(String simName, int atcID, int blockID, float row, float bay, float width, float height) {
+	public SimATC(String simName, int atcID, int blockID, float row, float bay, float width, float height, int type) {
 		super(simName);
 		this.atcID =atcID;
 		this.blockID = blockID;
 
+		this.setLocationType(type);
 
 		atcJobManager = atcManager.getATCManager(blockID);
 
@@ -230,8 +244,6 @@ public abstract class SimATC extends SimModel {
 				getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH);
 
 		this.bounds = new Rectangle((int) (position.x - width / 2), (int) (position.y - height / 2), (int) width, (int) height);
-
-
 
 		velocity = new Vector2(1, 1);
 
@@ -407,6 +419,12 @@ public abstract class SimATC extends SimModel {
 			return true;
 		else
 			return false;
+	}
+
+	public Vector2 getLocation() {
+
+		return position;
+
 	}
 
 }

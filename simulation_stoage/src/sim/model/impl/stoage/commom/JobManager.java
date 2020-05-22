@@ -104,16 +104,18 @@ public class JobManager extends SimModelManager{
 			minusActiveOrder();
 			System.out.println("release:" + activeOrderCount);
 
-			notify();
+
 		}
 
 		private synchronized void plusActiveOrder() {
 			activeOrderCount++;
 			System.out.println("plus:" + activeOrderCount);
+			notifyAll();
 		}
 
 		private synchronized void minusActiveOrder() {
 			activeOrderCount--;
+			notifyAll();
 		}
 
 		int activeOrderCount = 0;
@@ -121,7 +123,7 @@ public class JobManager extends SimModelManager{
 		public synchronized void ready()
 		{
 			ready = false;
-			/*	while (activeOrderCount == 4)
+			/*while (activeOrderCount == 4)
 				{
 					try {
 						System.out.println("ready:" + activeOrderCount);
@@ -129,7 +131,7 @@ public class JobManager extends SimModelManager{
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-				}*/
+			}*/
 
 			try {
 					Thread.sleep(1000);
@@ -201,8 +203,9 @@ public class JobManager extends SimModelManager{
 			while(flag)
 			{
 				try {
-					putOrder();
 					ready();
+					putOrder();
+
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
