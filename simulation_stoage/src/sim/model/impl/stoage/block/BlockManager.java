@@ -12,6 +12,10 @@ public class BlockManager extends SimModelManager{
 
 	public static float blockRate = (float) 1.0;
 
+	public static float blockWRate = (float) 1.0;
+
+	public static float blockHRate = (float) 1.0;
+
 	private static BlockManager instance;
 
 	public static int gap = 15;
@@ -122,8 +126,6 @@ public class BlockManager extends SimModelManager{
 
 
 	public Block getBlock(int blockID) {
-
-		System.out.println(blocks.length);
 
 		return blocks[blockID];
 	}

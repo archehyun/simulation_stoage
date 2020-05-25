@@ -5,12 +5,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -129,32 +129,18 @@ public class SimFrame extends JFrame implements ActionListener {
 
 		getContentPane().add(pnMain);
 
-		addComponentListener(new ComponentListener() {
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-
-			}
+		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
 				JFrame frame = (JFrame) e.getComponent();
 
-				float rate = frame.getSize().width / 300;
-
+				float wrate = frame.getSize().width / 250;
+				float hrate = frame.getSize().height / 250;
+				float rate = frame.getSize().height / 250;
 				BlockManager.blockRate = rate;
-
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
+				BlockManager.blockWRate = wrate;
+				BlockManager.blockHRate = hrate;
 
 			}
 		});
@@ -216,19 +202,8 @@ public class SimFrame extends JFrame implements ActionListener {
 
 		JTextField txfInput = new JTextField();
 
-		txfInput.addKeyListener(new KeyListener() {
 
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-
-			}
+		txfInput.addKeyListener(new KeyAdapter() {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -351,8 +326,6 @@ public class SimFrame extends JFrame implements ActionListener {
 					simMain.simulationStop();
 					simMain.clear();
 				}
-
-
 			}
 		});
 
@@ -374,7 +347,6 @@ public class SimFrame extends JFrame implements ActionListener {
 		butAuto.setEnabled(false);
 
 		butAuto.addActionListener(this);
-
 
 		butNext = new JButton("Next");
 		butNext.setMnemonic('N');
@@ -491,7 +463,7 @@ public class SimFrame extends JFrame implements ActionListener {
 
 				try {
 
-					int speed = Integer.parseInt(strSpeed);
+					float speed = Float.parseFloat(strSpeed);
 
 					simMain.updateATCSpeed(speed);
 

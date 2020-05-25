@@ -16,7 +16,7 @@ public abstract class ATCJobManager extends SimModelManager {
 
 	private int blockID;
 
-	public static int SPEED = 100;
+	public static float SPEED = 0.04f;
 
 	Random rn =new Random();
 
@@ -118,4 +118,13 @@ public abstract class ATCJobManager extends SimModelManager {
 	}
 
 	public abstract String getType();
+
+	public void setBlockID(int blockID) {
+		this.blockID = blockID;
+
+	}
+
+	public int getBlockID() {
+		return blockID;
+	}
 }

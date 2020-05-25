@@ -12,12 +12,15 @@ import sim.model.queue.SimQueue;
 import sim.view.framework.IFMonitor;
 
 /**
+ * Simulation Model class
+ *
  * @author archehyun
+ * @since 2020.05.17
  *
  */
 public abstract class SimModel implements IFSimModel, Runnable {
 
-	Logger logger = Logger.getLogger(getClass());
+	public Logger logger = Logger.getLogger(getClass());
 
 	/**
 	 * 占시뮬뤄옙占싱쇽옙 占쏙옙 占쏙옙占쏙옙트
@@ -26,7 +29,6 @@ public abstract class SimModel implements IFSimModel, Runnable {
 
 	public void addSimModel(SimModel model) {
 		list.add(model);
-
 	}
 
 	/**
@@ -131,6 +133,7 @@ public abstract class SimModel implements IFSimModel, Runnable {
 	}
 
 	/**
+	 *
 	 * 占쏙옙占쏙옙沽占쏙옙占� 占쌨쇽옙占쏙옙 占쏙옙占쏙옙 占쌨쇽옙占쏙옙 占쏙옙占쏙옙
 	 *
 	 * @param message
@@ -214,6 +217,11 @@ public abstract class SimModel implements IFSimModel, Runnable {
 	public void addMonitor(IFMonitor monitor)
 	{
 		this.monitors.add(monitor);
+
+	}
+
+	@Override
+	public void update(double delta) {
 
 	}
 

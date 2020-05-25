@@ -42,6 +42,8 @@ public class ATCManager {
 			System.out.println("create act:" + type);
 			atcManagerList.put(blockID, manager);
 
+			manager.setBlockID(blockID);
+
 			return manager;
 		}
 	}

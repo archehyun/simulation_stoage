@@ -98,9 +98,9 @@ public abstract class SimATC extends SimModel {
 
 	protected ATCMove moveYY;
 
-	protected int initX; // row 占쏙옙占쏙옙 占쏙옙치
+	protected int initRow; // row 占쏙옙占쏙옙 占쏙옙치
 
-	protected int initY; // bay 占쏙옙占쏙옙 占쏙옙치
+	protected int initBay; // bay 占쏙옙占쏙옙 占쏙옙치
 
 	//protected int initXpointOnWindows = 0; // row 占쏙옙占쏙옙 占십깍옙 占쏙옙치
 
@@ -116,13 +116,15 @@ public abstract class SimATC extends SimModel {
 	 *
 	 * atc bay, row initation
 	 *
-	 * @param initX
-	 * @param initY
+	 * @param initRow
+	 * @param initBay
 	 */
-	public void setInitBlockLocation(float initX, float initY)
+	public void setInitBlockLocation(float initRow, float initBay)
 	{
-		this.setInitX(initX);
-		this.setInitY(initY);
+
+		System.out.println("init:" + row + "," + bay);
+		this.setInitRow(initRow);
+		this.setInitBay(initBay);
 	}
 
 
@@ -131,25 +133,25 @@ public abstract class SimATC extends SimModel {
 	 */
 	boolean isLoad=false;
 
+	Vector2 destination;
+
 	public int getInitRow() {
-		return initX;
+		return initRow;
 	}
 
-	public int getInitX() {
-		return (int) initPosition.x;
-	}
 
-	public void setInitX(float initX) {
-		this.initX = (int) initX;
+
+	public void setInitRow(float initRow) {
+		this.initRow = (int) initRow;
 
 	}
 
-	public int getInitY() {
-		return initY;
+	public int getInitBay() {
+		return initBay;
 	}
 
-	public void setInitY(float initY) {
-		this.initY = (int) initY;
+	public void setInitBay(float initBay) {
+		this.initBay = (int) initBay;
 	}
 
 	public abstract void updateInitLocationOnWinddows(int blockID);
@@ -163,14 +165,14 @@ public abstract class SimATC extends SimModel {
 	/**
 	 * atc speed
 	 */
-	private int speed;
+	private float speed;
 
 	/**
 	 * idle state
 	 */
 	boolean isIdle=true;
 
-	protected int deltaTime = 1;
+	protected double deltaTime = 1;
 
 	/**
 	 * @return isIdle
@@ -185,19 +187,52 @@ public abstract class SimATC extends SimModel {
 	 */
 	public synchronized void arrival(int currentXpointOnWindows, int currentYpointOnWindows)
 	{
-		if (this.position.x == currentXpointOnWindows && this.position.y == currentYpointOnWindows) {
-
-
+		/*if (this.position.x == currentXpointOnWindows && this.position.y == currentYpointOnWindows) {
 			this.isIdle=true;
 
 			notify();
-		}
+		}*/
 	}
 
 	public synchronized void arrival() {
 		this.isIdle = true;
 
-		notify();
+		notifyAll();
+
+	}
+
+	public boolean isArrival() {
+
+		int destinationX = (int) this.getDestination().x;
+		int currentX = (int) this.getLocation().x;
+		int destinationY = (int) this.getDestination().y;
+		int currentY = (int) this.getLocation().y;
+
+		if (destinationX == currentX && destinationY == currentY) {
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public float hoistTime = 1000f;
+
+	public float getHoistTime() {
+		return hoistTime;
+	}
+
+	public void setHoistTime(float hoistTime) {
+		this.hoistTime = hoistTime;
+	}
+
+	public float hoistWorkTime = 0;
+	public synchronized void release() {
+		this.isIdle = true;
+
+		notifyAll();
 	}
 
 
@@ -225,27 +260,28 @@ public abstract class SimATC extends SimModel {
 		notify();
 	}
 
-	public SimATC(String simName, int atcID, int blockID, float row, float bay, float width, float height, int type) {
+	public SimATC(String simName, int atcID, int blockID, float row, float bay, float width, float height, int locationType) {
 		super(simName);
 		this.atcID =atcID;
 		this.blockID = blockID;
 
-		this.setLocationType(type);
+		this.setLocationType(locationType);
 
 		atcJobManager = atcManager.getATCManager(blockID);
 
 		this.setInitBlockLocation(row, bay);
 
 		this.initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
-		this.initPosition.y = getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin - BlockManager.conH;
+		this.initPosition.y = getInitBay() * (BlockManager.conH + BlockManager.hGap) + getInitYpointOnWindows();
 
 		this.position = new Vector2(getInitRow() * BlockManager.hGap + initPosition.x,
 
-				getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH);
+				getInitBay() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH);
 
 		this.bounds = new Rectangle((int) (position.x - width / 2), (int) (position.y - height / 2), (int) width, (int) height);
 
 		velocity = new Vector2(1, 1);
+		destination = new Vector2();
 
 	}
 
@@ -275,7 +311,7 @@ public abstract class SimATC extends SimModel {
 	public void plusY() throws InterruptedException
 	{
 		position.add(0, velocity.y);
-		bounds.lowerLeft.add(0, this.velocity.y * deltaTime);
+		bounds.lowerLeft.add(0, this.velocity.y * (float) deltaTime);
 	}
 
 	/**
@@ -285,14 +321,14 @@ public abstract class SimATC extends SimModel {
 	public void minusY() throws InterruptedException {
 
 		position.sub(0, velocity.y);
-		bounds.lowerLeft.sub(0, this.velocity.y * deltaTime);
+		bounds.lowerLeft.sub(0, this.velocity.y * (float) deltaTime);
 	}
 
 	@Override
 	public void simStart()
 	{
-		moveXX.simStart();
-		moveYY.simStart();
+		//moveXX.simStart();
+		//moveYY.simStart();
 		super.simStart();
 	}
 	@Override
@@ -333,9 +369,28 @@ public abstract class SimATC extends SimModel {
 	/**
 	 * @return speed
 	 */
-	public int getSpeed() {
+	public float getSpeed() {
 
-		return speed;
+		return speed * BlockManager.blockRate;
+	}
+
+	/**
+	 *
+	 * set destinatioin on windows
+	 * unit : point
+	 * @param x
+	 * @param y
+	 */
+	public void setDestination(float x, float y) {
+		destination.set(x, y);
+	}
+
+	public void setDestinationLocation(int row, int bay)
+	{
+
+		float x = (BlockManager.conW + BlockManager.wGap) * row + getInitXpointOnWindows();
+		float y = (BlockManager.conH + BlockManager.hGap) * bay + getInitYpointOnWindows();
+		this.setDestination(x, y);
 	}
 
 	/**
@@ -358,7 +413,7 @@ public abstract class SimATC extends SimModel {
 
 	}
 
-	boolean hoist = false;
+	public boolean hoist = false;
 
 	public boolean isHoist() {
 		return hoist;
@@ -371,7 +426,9 @@ public abstract class SimATC extends SimModel {
 		try {
 
 			hoist = true;
-			Thread.sleep(1000);
+
+			System.out.println("host");
+			Thread.sleep(000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -407,7 +464,7 @@ public abstract class SimATC extends SimModel {
 		return blockID;
 	}
 
-	public void setSpeed(int speed) {
+	public void setSpeed(float speed) {
 		this.speed = speed;
 
 	}
@@ -426,5 +483,20 @@ public abstract class SimATC extends SimModel {
 		return position;
 
 	}
+
+	public void setLocation(float x, float y) {
+		position.set(x, y);
+
+	}
+
+
+
+	public Vector2 getDestination() {
+		// TODO Auto-generated method stub
+		return destination;
+	}
+
+
+
 
 }

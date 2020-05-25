@@ -32,7 +32,7 @@ public class ATCLandSideCrossMoveY extends ATCMove {
 
 	private void move() {
 		try {
-			Thread.sleep(atc.getSpeed());
+			Thread.sleep((long) atc.getSpeed());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

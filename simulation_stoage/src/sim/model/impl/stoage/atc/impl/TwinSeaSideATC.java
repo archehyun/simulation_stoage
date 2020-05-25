@@ -34,7 +34,7 @@ public class TwinSeaSideATC extends SimATC {
 
 		this.initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
 
-		this.initPosition.y = getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin - BlockManager.conH;
+		this.initPosition.y = getInitBay() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin - BlockManager.conH;
 
 		//position.y = initPosition.y;
 
@@ -75,7 +75,7 @@ public class TwinSeaSideATC extends SimATC {
 
 		StoageEvent event = (StoageEvent) atcJob;
 
-		notifyMonitor("sea:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
+		notifyMonitor("sea:process:" + this.getSimName() + "initY:" + this.getInitBay() + ",currentY:" + this.getY() + ", Y:" + event.getY());
 
 		atcJob = null;
 	}
@@ -125,7 +125,7 @@ public class TwinSeaSideATC extends SimATC {
 			setLoad(false);
 			plusWorkCount();
 			break;
-		case StoageEvent.MOVE:
+		case StoageEvent.COMMAND_MOVE:
 			moveDestination(job);
 			break;
 

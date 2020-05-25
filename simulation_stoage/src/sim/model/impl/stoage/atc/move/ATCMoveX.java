@@ -29,13 +29,13 @@ public class ATCMoveX extends ATCMove {
 	@Override
 	public void moveTP(SimEvent job) {
 		do {
-			if (atc.getInitX() > atc.getX()) {
+			if (atc.getInitRow() > atc.getX()) {
 				atc.plusX();
-			} else if (atc.getInitX() < atc.getX()) {
+			} else if (atc.getInitRow() < atc.getX()) {
 				atc.minusX();
 			}
 			try {
-				Thread.sleep(atc.getSpeed());
+				Thread.sleep((long) atc.getSpeed());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -55,7 +55,7 @@ public class ATCMoveX extends ATCMove {
 				atc.minusX();
 			}
 			try {
-				Thread.sleep(atc.getSpeed());
+				Thread.sleep((long) atc.getSpeed());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

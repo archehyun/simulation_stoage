@@ -5,11 +5,12 @@ import java.util.HashMap;
 import sim.model.queue.SimNode;
 
 /**
- * define simulation eventf
+ * define simulation event
  *
  * @author archehyun
  * @SEE
  * @since 2020.05.17
+ *
  *
  *
  */
@@ -21,9 +22,9 @@ public class SimEvent extends SimNode{
 	 * command
 	 * order
 	 */
-	public static final int COMMAND = 1;
+	public static final int TYPE_COMMAND = 1;
 
-	public static final int ORDER = 2;
+	public static final int TYPE_ORDER = 2;
 
 	/*
 	 * command type
@@ -31,7 +32,7 @@ public class SimEvent extends SimNode{
 
 	public static final int COMMAND_UPDATE_SPEED = 1;
 
-	public static final int COMMAND_MOVE = 2;
+	public static final int COMMAND_MOVE = 3;
 
 	HashMap<String, Object> map;
 

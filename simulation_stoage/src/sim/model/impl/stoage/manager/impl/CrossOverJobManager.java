@@ -31,7 +31,7 @@ public class CrossOverJobManager extends ATCJobManager {
 
 		switch (event.getCommandType()) {
 		case SimEvent.COMMAND_UPDATE_SPEED:
-			int speed = (int) event.get("speed");
+			float speed = (float) event.get("speed");
 
 			while (iter.hasNext()) {
 				SimATC model = (SimATC) iter.next();
@@ -45,18 +45,21 @@ public class CrossOverJobManager extends ATCJobManager {
 
 				StoageEvent ee = (StoageEvent) event;
 
-				ee.orderType = StoageEvent.MOVE;
-				int blockId = ((StoageEvent) event).getSlot().getBlock().getBlockID();
+				ee.orderType = StoageEvent.COMMAND_MOVE;
+				((StoageEvent) event).getSlot().getBlock().getBlockID();
 
+				if (ee.getInOutType() == ee.getInOutType()) {
+					model.append(ee);
+					logger.info("append atc order:" + event.getSimName());
+				}
 
-				if ((model.getAtcID() % 100) == blockId) {
+				/*if ((model.getAtcID() % 100) == blockId) {
 
 					if (model.getAtcID() == ee.getATCID()) {
 
-						model.append(ee);
-						logger.debug("append atc order:" + event.getSimName());
+
 					}
-				}
+				}*/
 			}
 			break;
 
@@ -69,9 +72,10 @@ public class CrossOverJobManager extends ATCJobManager {
 
 		atcJob.add("atc", list);
 
-		int blockID = ((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
+		((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
 		//divied(blockID, atcJob);
-		minWorkACT(blockID, atcJob);
+		sideWorkACT(atcJob);
+		//minWorkACT(blockID, atcJob);
 
 		if (atcJob == null)
 			System.err.println("error");
@@ -117,10 +121,10 @@ public class CrossOverJobManager extends ATCJobManager {
 
 		switch (event.getEventType()) {
 
-		case SimEvent.COMMAND:
+		case SimEvent.TYPE_COMMAND:
 			commandProcess(event);
 			break;
-		case SimEvent.ORDER:
+		case SimEvent.TYPE_ORDER:
 			orderProcess(event);
 			break;
 
@@ -134,34 +138,84 @@ public class CrossOverJobManager extends ATCJobManager {
 
 	/**
 	 *
-	 * 최소 WORK ATC 선택
+	 * 理��� WORK ATC ����
 	 *
 	 * @param blockID
 	 * @param atcJob
 	 */
 	private void minWorkACT(int blockID, SimEvent atcJob) {
 
-		Iterator<SimModel> iter = list.iterator();
+		logger.debug("atc list size:" + list.size());
+
+		list.iterator();
 
 		List<SimATC> li = new LinkedList<SimATC>();
 
-		while (iter.hasNext()) {
+		/*while (iter.hasNext()) {
 			SimATC model = (SimATC) iter.next();
 			if ((model.getAtcID() % 100) == blockID) {
 				li.add(model);
 			}
-		}
+		}*/
 
-
-		SimATC first = li.get(0);
+		try {
+			SimATC first = (SimATC) list.get(0);
 		for (int i = 1; i < li.size(); i++) {
 			SimATC temp = li.get(i);
+
 			if (first.getWorkCount() > temp.getWorkCount()) {
 				first = temp;
 			}
 		}
 		//System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
 		first.append(atcJob);
+		} catch (Exception e) {
+			System.err.println(list.size());
+		}
+	}
+
+	/**
+	 *
+	 * 理��� WORK ATC ����
+	 *
+	 * @param blockID
+	 * @param atcJob
+	 */
+	private void sideWorkACT(SimEvent atcJob) {
+
+
+		StoageEvent event = (StoageEvent) atcJob;
+
+		list.iterator();
+
+		new LinkedList<SimATC>();
+
+		/*while (iter.hasNext()) {
+			SimATC model = (SimATC) iter.next();
+			if ((model.getAtcID() % 100) == blockID) {
+				li.add(model);
+			}
+		}*/
+
+		try {
+			for (int i = 0; i < list.size(); i++) {
+				SimATC temp = (SimATC) list.get(i);
+
+				if (temp.getLocationType() == event.getSeaLandType()) {
+
+					System.out.println("set order " + this.getBlockID() + ", " + temp.getAtcID() + ", " + event.getBlockID() + ", " + event.getBay());
+					temp.append(atcJob);
+					return;
+				}
+				else {
+					//System.out.println("not set order" + temp.getLocationType() + "," + event.getSeaLandType());
+				}
+			}
+			//System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
+
+		} catch (Exception e) {
+			System.err.println(list.size());
+		}
 	}
 
 	@Override

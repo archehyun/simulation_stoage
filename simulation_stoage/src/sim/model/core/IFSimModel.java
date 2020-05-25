@@ -15,4 +15,6 @@ public interface IFSimModel {
 	 */
 	public void append(SimNode node);
 
+	public void update(double delta);
+
 }

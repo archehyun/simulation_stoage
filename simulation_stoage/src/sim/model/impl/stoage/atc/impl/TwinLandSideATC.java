@@ -24,7 +24,7 @@ public class TwinLandSideATC extends SimATC {
 	public void updateInitLocationOnWinddows(int blockID) {
 		initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
 
-		initPosition.y = getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH;
+		initPosition.y = getInitBay() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH;
 
 		//position.y = initPosition.y;
 
@@ -88,7 +88,7 @@ public class TwinLandSideATC extends SimATC {
 
 
 
-		notifyMonitor("land:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
+		notifyMonitor("land:process:" + this.getSimName() + "initY:" + this.getInitBay() + ",currentY:" + this.getY() + ", Y:" + event.getY());
 
 		atcJob = null;
 	}

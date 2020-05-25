@@ -74,8 +74,10 @@ public class SimViewATC extends SimViewObject {
 		g.setColor(ATC_COLOR);
 
 		//atc
-		int xx1 = (int) (atc.getInitXpointOnWindows() * BlockManager.blockRate);
-		int yy2 = (int) ((atc.getInitYpointOnWindows() - 2) * BlockManager.blockRate);
+		Vector2 atcLocation = atc.getLocation();
+
+		int xx = (int) ((atc.getInitXpointOnWindows() + 25) * BlockManager.blockRate);
+		int yy2 = (int) ((atcLocation.y - 1) * BlockManager.blockRate);
 		switch (atc.getLocationType()) {
 		case SimATC.TYPE_SEA:
 
@@ -90,42 +92,39 @@ public class SimViewATC extends SimViewObject {
 		}
 
 		int ww1 = (int) (atcW * BlockManager.blockRate);
-		g.fillRect(xx1 + 40, yy2, ww1, 5);
+		g.fillRect(xx, yy2, ww1, 5);
 
-		g.fillRect(xx1 + 38, yy2, 2, 15);
-		g.fillRect(xx1 + 40 + ww1, yy2, 2, 15);
+		g.fillRect(xx - 2, yy2, 2, 15);
+		g.fillRect(xx + ww1, yy2, 2, 15);
 
 
 		// draw trolly
 		if (atc.isLoad()) {
 			g.setColor(BUSY_COLOR);
 
-		} else {
-			g.setColor(TROLLY_COLOR);
-		}
-
-		int xx = (int) ((atc.getX()) * BlockManager.blockRate);
-
-		int yyy =(int) ((atc.getInitYpointOnWindows()) * BlockManager.blockRate);
-
 		switch (atc.getLocationType()) {
 		case SimATC.TYPE_SEA:
 
 			break;
 		case SimATC.TYPE_LAND:
-			yyy -= 50;
-
 			break;
 
 		default:
 			break;
 		}
 
-		g.fillRect(xx + 40, yyy, 5, 5);
+			g.fillRect(xx, yy2 + 5, 5, 5);
+		} else {
+			g.setColor(TROLLY_COLOR);
+		}
 
 		//hosist
 		if (atc.isHoist()) {
-			g.fillRect(xx + 40, yyy + 5, 5, 10);
+
+			float rate = atc.hoistWorkTime / atc.getHoistTime();
+			float h = 10f * rate;
+
+			g.fillRect(xx, yy2 + 5, 5, (int) h);
 		}
 
 	}
@@ -167,7 +166,7 @@ public class SimViewATC extends SimViewObject {
 		int ww = (int) (trollySizeW * BlockManager.blockRate);
 		int hh = (int) (trollySizeH * BlockManager.blockRate);
 		g.fillRect(xx, yy, ww, hh);
-
+		//System.out.println("xx:" + xx + ",yy:" + yy);
 		g.setColor(Color.WHITE);
 
 		int xx1 = (int) (atc.getInitXpointOnWindows() * BlockManager.blockRate);

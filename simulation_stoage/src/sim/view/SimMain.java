@@ -2,6 +2,9 @@ package sim.view;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,8 +16,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import sim.model.core.IFSimModel;
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.SimATC;
+import sim.model.impl.stoage.atc.impl.CrossATC2;
 import sim.model.impl.stoage.atc.impl.CrossLandSideATC;
 import sim.model.impl.stoage.atc.impl.CrossSeaSideATC;
 import sim.model.impl.stoage.block.Block;
@@ -43,7 +48,14 @@ public class SimMain {
 
 	SimCanvas canvas;
 
-	public void render() {
+	List<IFSimModel> list = new LinkedList<IFSimModel>();
+
+	public void render(double delta) {
+
+		Iterator<IFSimModel> iter = list.iterator();
+		while (iter.hasNext()) {
+			iter.next().update(delta);
+		}
 
 	}
 
@@ -80,8 +92,6 @@ public class SimMain {
 
 			blockManager.block = blockList.getLength();
 
-			System.out.println("bloick size:" + blockManager.block);
-
 			blockManager.blockInit();
 
 			if (blockList.getLength() > 0) {
@@ -91,6 +101,10 @@ public class SimMain {
 					Element blockElement = (Element) blockList.item(i);
 
 					String type = blockElement.getAttribute("type");
+					String use = blockElement.getAttribute("use");
+
+					if (!Boolean.valueOf(use))
+						continue;
 
 					int blockID = createBlock(blockElement);
 
@@ -106,6 +120,7 @@ public class SimMain {
 							createATC(blockID, atcManager, atcNode);
 						}
 					}
+
 				}
 			}
 		} catch (Exception e) {
@@ -130,6 +145,18 @@ public class SimMain {
 			} else if (type.equals("land")) {
 				atc = new CrossLandSideATC("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_LAND);
 			}
+
+			else if (type.equals("new_sea")) {
+				atc = new CrossATC2("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_SEA);
+			}
+			else if (type.equals("new_land")) {
+				atc = new CrossATC2("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_LAND);
+			}
+			else {
+				System.out.println("type:" + type);
+			}
+
+			list.add(atc);
 		}
 		atc.setInitBlockLocation(Integer.parseInt(initLocation.getAttribute("row")), Integer.parseInt(initLocation.getAttribute("bay")));
 		atc.setSpeed(ATCJobManager.SPEED);
@@ -148,6 +175,8 @@ public class SimMain {
 		int y = Integer.parseInt(blockElement.getAttribute("y"));
 
 		Block blocks = blockManager.getBlock(blockID);
+
+		this.list.add(blocks);
 		blocks.setLocation(x, y);
 		canvas.addObject(blocks);
 
@@ -232,8 +261,8 @@ public class SimMain {
 		return element;
 	}
 
-	public void updateATCSpeed(int speed) {
-		SimEvent event = new SimEvent(0, SimEvent.COMMAND);
+	public void updateATCSpeed(float speed) {
+		SimEvent event = new SimEvent(0, SimEvent.TYPE_COMMAND);
 		event.setCommandType(SimEvent.COMMAND_UPDATE_SPEED);
 
 		event.add("speed", speed);

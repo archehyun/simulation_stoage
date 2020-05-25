@@ -9,8 +9,33 @@ public class StoageEvent extends SimEvent{
 
 	public static final int OUTBOUND=1;
 
-	public static final int MOVE = 2;
+	public static final int LAND_OUTBOUND = 2;
 
+	public static final int LAND_INBOUND = 3;
+
+	public static final int SEA = 0;
+
+	public static final int LAND = 1;
+
+	private int inOutType;
+
+	public int getInOutType() {
+		return inOutType;
+	}
+
+	public void setInOutType(int inOutType) {
+		this.inOutType = inOutType;
+	}
+
+	private int seaLandType;
+
+	public int getSeaLandType() {
+		return seaLandType;
+	}
+
+	public void setSeaLandType(int seaLandType) {
+		this.seaLandType = seaLandType;
+	}
 
 	public int orderType;
 
@@ -20,30 +45,20 @@ public class StoageEvent extends SimEvent{
 
 	private int atcID;
 
-	private int bay;
 
-	public int getBay() {
-		return bay;
-	}
-
-	public void setBay(int bay) {
-		this.bay = bay;
-	}
-
-	public int getRow() {
-		return row;
-	}
-
-	public void setRow(int row) {
-		this.row = row;
-	}
-
-	private int row;
 
 	private int x,y;
 
 	public int getX() {
 		return this.x;
+	}
+
+	public int getRow() {
+		return this.getX();
+	}
+
+	public int getBay() {
+		return this.getY();
 	}
 
 	public void setX(int x) {
@@ -70,6 +85,10 @@ public class StoageEvent extends SimEvent{
 
 	Slot slot;
 
+	private int blockID;
+
+	public int workStep;
+
 	public void setSlot(Slot slot) {
 		this.slot =slot;
 	}
@@ -78,7 +97,21 @@ public class StoageEvent extends SimEvent{
 		return slot;
 	}
 
+	public void setBlockID(int blockID) {
+		this.blockID = blockID;
 
+	}
+
+	public int getBlockID() {
+		// TODO Auto-generated method stub
+		return blockID;
+	}
+
+	int tpIndex;
+
+	public void setTPIndex(int tpIndex) {
+		this.tpIndex = tpIndex;
+	}
 
 
 }
