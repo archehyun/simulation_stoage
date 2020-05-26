@@ -91,7 +91,6 @@ public class SimFrame extends JFrame implements ActionListener {
 	public SimFrame() {
 		logger.debug("log4j:logger.debug()");
 
-
 		simMain.setCanvas(canvas);
 
 		this.setTitle("Stoage Simualtion");
@@ -316,6 +315,7 @@ public class SimFrame extends JFrame implements ActionListener {
 					butAuto.setEnabled(true);
 					butNext.setEnabled(true);
 					simMain.clear();
+
 					simMain.createInit();
 					simMain.simulationStart();
 				} else {
@@ -507,6 +507,8 @@ public class SimFrame extends JFrame implements ActionListener {
 			JMenuItem item = (JMenuItem) e.getSource();
 			item.setEnabled(false);
 			stopMenuItem.setEnabled(true);
+
+			infoPanel.updateView();
 
 		} else if (command.equals("Stop")) {
 			butStart.setSelected(false);

@@ -27,7 +27,9 @@ public class SimCanvas extends Canvas implements Runnable {
 	protected ArrayList<DrawObject> draw = new ArrayList<DrawObject>();
 
 	public void addDrawObject(DrawObject object) {
+
 		draw.add(object);
+		System.out.println("add size:" + draw.size());
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -81,18 +83,23 @@ public class SimCanvas extends Canvas implements Runnable {
 		//Call your render funtions from here
 
 		try {
+
+			//			System.out.println("size:" + draw.size());
 			//Collections.reverse(draw);
 			List<DrawObject> unmodifiableList = Collections.unmodifiableList(draw);
 
 			//;
 
 			for (DrawObject str : unmodifiableList) {
+
+				//				System.out.println(str);
 				str.draw(g);
 			}
+			//System.out.println();
 
 			g.setColor(Color.black);
 
-			g.drawString(frameInfo, 0, getHeight() - 15);
+			g.drawString(frameInfo, getWidth() - 125, 0 + 15);
 
 		} catch (Exception e) {
 			//e.printStackTrace();

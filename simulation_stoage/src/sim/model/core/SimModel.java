@@ -31,8 +31,18 @@ public abstract class SimModel implements IFSimModel, Runnable {
 		list.add(model);
 	}
 
+	int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	/**
-	 * 占쏙옙占쏙옙占� 占쏙옙占쏙옙트
+	 *
 	 */
 	protected List<IFMonitor> monitors;
 
@@ -89,6 +99,17 @@ public abstract class SimModel implements IFSimModel, Runnable {
 		this.list = new LinkedList<SimModel>();
 		this.monitors = new LinkedList<>();
 
+		logger.debug("init:" + simName);
+
+	}
+
+	public SimModel(String simName, int id) {
+
+		this.simName = simName;
+		this.queue = new NomalQueue();
+		this.list = new LinkedList<SimModel>();
+		this.monitors = new LinkedList<>();
+		this.setId(id);
 		logger.debug("init:" + simName);
 
 	}

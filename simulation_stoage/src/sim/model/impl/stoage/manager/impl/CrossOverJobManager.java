@@ -79,7 +79,7 @@ public class CrossOverJobManager extends ATCJobManager {
 
 		if (atcJob == null)
 			System.err.println("error");
-		this.notifyMonitor(atcJob);
+		//this.notifyMonitor(atcJob);
 
 	}
 
@@ -186,36 +186,31 @@ public class CrossOverJobManager extends ATCJobManager {
 
 		StoageEvent event = (StoageEvent) atcJob;
 
-		list.iterator();
 
-		new LinkedList<SimATC>();
+		System.out.println("pre : block:" + event.getBlockID() + ", " + event.getSeaLandType());
 
-		/*while (iter.hasNext()) {
-			SimATC model = (SimATC) iter.next();
-			if ((model.getAtcID() % 100) == blockID) {
-				li.add(model);
-			}
-		}*/
+		synchronized (list) {
+			try {
+				for (int i = 0; i < list.size(); i++) {
+					SimATC temp = (SimATC) list.get(i);
 
-		try {
-			for (int i = 0; i < list.size(); i++) {
-				SimATC temp = (SimATC) list.get(i);
+					if (temp.getLocationType() == event.getSeaLandType()) {
 
-				if (temp.getLocationType() == event.getSeaLandType()) {
-
-					System.out.println("set order " + this.getBlockID() + ", " + temp.getAtcID() + ", " + event.getBlockID() + ", " + event.getBay());
-					temp.append(atcJob);
-					return;
+						System.out.println("set order block:" + this.getBlockID() + ", locationType:" + temp.getLocationType() + ",atcID:" + temp.getAtcID() + ", " + event.getBlockID() + ", " + event.getBay());
+						temp.append(atcJob);
+						return;
+					} else {
+						//System.out.println("not set order" + temp.getLocationType() + "," + event.getSeaLandType());
+					}
 				}
-				else {
-					//System.out.println("not set order" + temp.getLocationType() + "," + event.getSeaLandType());
-				}
-			}
-			//System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
+				System.out.println("not set:jobid:" + event.getJobID() + ",type:" + event.getSeaLandType() + ",block:" + event.getBlockID());
+				//System.out.println("put order:" + first.getAtcID() + ", count:" + first.getWorkCount() + ", " + li.get(0).getWorkCount() + "," + li.get(1).getWorkCount() + ",busy:" + this.getBusyCount());
 
-		} catch (Exception e) {
-			System.err.println(list.size());
+			} catch (Exception e) {
+				System.err.println(list.size());
+			}
 		}
+
 	}
 
 	@Override

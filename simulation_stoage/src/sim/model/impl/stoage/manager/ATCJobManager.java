@@ -1,6 +1,7 @@
 package sim.model.impl.stoage.manager;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import sim.model.core.SimModel;
@@ -126,5 +127,10 @@ public abstract class ATCJobManager extends SimModelManager {
 
 	public int getBlockID() {
 		return blockID;
+	}
+
+	public List getATCs() {
+		return list;
+
 	}
 }

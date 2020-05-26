@@ -3,6 +3,7 @@ package sim.model.impl.stoage.atc;
 import sim.model.core.SimEvent;
 import sim.model.core.SimModel;
 import sim.model.impl.stoage.atc.move.ATCMove;
+import sim.model.impl.stoage.atc.move.ATCMove2;
 import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.JobManager;
 import sim.model.impl.stoage.manager.ATCJobManager;
@@ -12,13 +13,24 @@ import sim.view.framework.Vector2;
 
 /**
  * @author archehyun
+ * @param <Canvas3D>
  *
  */
-public abstract class SimATC extends SimModel {
+public abstract class SimATC<Canvas3D> extends SimModel {
+
+	public int inOutType;
+
+	public int getInOutType() {
+		return inOutType;
+	}
+
+	public void setInOutType(int inOutType) {
+		this.inOutType = inOutType;
+	}
 
 	public static final int TYPE_LAND = 1;
 
-	public static final int TYPE_SEA = 2;
+	public static final int TYPE_SEA = 0;
 
 	private int locationType;
 
@@ -98,17 +110,9 @@ public abstract class SimATC extends SimModel {
 
 	protected ATCMove moveYY;
 
-	protected int initRow; // row 占쏙옙占쏙옙 占쏙옙치
+	protected int initRow; // int row
 
-	protected int initBay; // bay 占쏙옙占쏙옙 占쏙옙치
-
-	//protected int initXpointOnWindows = 0; // row 占쏙옙占쏙옙 占십깍옙 占쏙옙치
-
-	//protected int initYpointOnWindows = 0; // bay  占쏙옙占쏙옙 占십깍옙 占쏙옙치
-
-	//protected int currentXpointOnWindows = 0; // row 占쏙옙占쏙옙 占십깍옙 占쏙옙치
-
-	//protected int currentYpointOnWindows = 0; // bay  占쏙옙占쏙옙 占십깍옙 占쏙옙치
+	protected int initBay; // init bay
 
 	protected JobManager jobManager = JobManager.getInstance();
 
@@ -121,8 +125,7 @@ public abstract class SimATC extends SimModel {
 	 */
 	public void setInitBlockLocation(float initRow, float initBay)
 	{
-
-		System.out.println("init:" + row + "," + bay);
+		logger.info("init:" + row + "," + bay);
 		this.setInitRow(initRow);
 		this.setInitBay(initBay);
 	}
@@ -156,10 +159,8 @@ public abstract class SimATC extends SimModel {
 
 	public abstract void updateInitLocationOnWinddows(int blockID);
 
-	private int atcID;
-
 	public int getAtcID() {
-		return atcID;
+		return getId();
 	}
 
 	/**
@@ -260,9 +261,9 @@ public abstract class SimATC extends SimModel {
 		notify();
 	}
 
-	public SimATC(String simName, int atcID, int blockID, float row, float bay, float width, float height, int locationType) {
-		super(simName);
-		this.atcID =atcID;
+	public SimATC(String simName, int id, int blockID, float row, float bay, float width, float height, int locationType) {
+		super(simName, id);
+
 		this.blockID = blockID;
 
 		this.setLocationType(locationType);
@@ -271,12 +272,12 @@ public abstract class SimATC extends SimModel {
 
 		this.setInitBlockLocation(row, bay);
 
-		this.initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
-		this.initPosition.y = getInitBay() * (BlockManager.conH + BlockManager.hGap) + getInitYpointOnWindows();
+		this.initPosition.x = row;
+		this.initPosition.y = bay;
 
-		this.position = new Vector2(getInitRow() * BlockManager.hGap + initPosition.x,
+		this.position = new Vector2(getInitRow() * BlockManager.hGap,
 
-				getInitBay() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin + BlockManager.conH);
+				getInitBay() * (BlockManager.conH + BlockManager.hGap) + BlockManager.conH);
 
 		this.bounds = new Rectangle((int) (position.x - width / 2), (int) (position.y - height / 2), (int) width, (int) height);
 
@@ -327,15 +328,13 @@ public abstract class SimATC extends SimModel {
 	@Override
 	public void simStart()
 	{
-		//moveXX.simStart();
-		//moveYY.simStart();
+
 		super.simStart();
 	}
 	@Override
 	public void simStop()
 	{
-		moveXX.simStop();
-		moveYY.simStop();
+
 		super.simStop();
 	}
 
@@ -388,8 +387,8 @@ public abstract class SimATC extends SimModel {
 	public void setDestinationLocation(int row, int bay)
 	{
 
-		float x = (BlockManager.conW + BlockManager.wGap) * row + getInitXpointOnWindows();
-		float y = (BlockManager.conH + BlockManager.hGap) * bay + getInitYpointOnWindows();
+		float x = (BlockManager.conW + BlockManager.wGap) * row;
+		float y = (BlockManager.conH + BlockManager.hGap) * bay;
 		this.setDestination(x, y);
 	}
 
@@ -492,11 +491,28 @@ public abstract class SimATC extends SimModel {
 
 
 	public Vector2 getDestination() {
-		// TODO Auto-generated method stub
 		return destination;
 	}
 
+	boolean crash = false;
+	public boolean isCrash() {
+		// TODO Auto-generated method stub
+		return crash;
+	}
 
+	public void setCrach(boolean crash) {
+		this.crash = crash;
 
+	}
+
+	public void setATCMove(boolean b) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public ATCMove2 getMovingObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

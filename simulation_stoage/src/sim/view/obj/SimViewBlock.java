@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.block.Block;
 import sim.model.impl.stoage.block.BlockManager;
+import sim.model.impl.stoage.commom.JobManager;
+import sim.model.impl.stoage.commom.StoageEvent;
 import sim.view.framework.SimViewObject;
 
 public class SimViewBlock extends SimViewObject{
@@ -62,26 +64,31 @@ public class SimViewBlock extends SimViewObject{
 		int xx,yy;
 		//sea side
 
-		int TP[] = block.getTP();
-		for (int j = 0; j < TP.length; j++) {
+		int Sea_TP[] = JobManager.getInstance().getTP(block.getBlockID(), StoageEvent.SEA);
+
+
+
+		for (int j = 0; j < Sea_TP.length; j++) {
 			xx = (int) ((initX + j * (BlockManager.conW + BlockManager.wGap)) * blockRate);
 			yy = (int) ((initY - (BlockManager.conH + BlockManager.hGap)) * blockRate);
 
-			if (TP[j] == Block.FULL_TP)
+			if (Sea_TP[j] == Block.FULL_TP)
 			{
 			g.fillRect(xx, yy, (int) ww, (int) hh);
-			} else if (TP[j] == Block.EMPTY_TP) {
+			} else if (Sea_TP[j] == Block.EMPTY_TP) {
 				g.drawRect(xx, yy, (int) ww, (int) hh);
 			}
 		}
+
+		int Land_TP[] = JobManager.getInstance().getTP(block.getBlockID(), StoageEvent.LAND);
 		//land side
 		for (int j = 0; j < block.getRow(); j++) {
 			xx = (int) ((initX + j * (BlockManager.conW + BlockManager.wGap)) * blockRate);
 			yy = (int) ((initY + (block.getBay()) * (BlockManager.conH + BlockManager.hGap)) * blockRate);
 
-			if (TP[j] == Block.FULL_TP) {
+			if (Land_TP[j] == Block.FULL_TP) {
 			g.fillRect(xx, yy, (int) ww, (int) hh);
-			} else if (TP[j] == Block.EMPTY_TP) {
+			} else if (Land_TP[j] == Block.EMPTY_TP) {
 				g.drawRect(xx, yy, (int) ww, (int) hh);
 			}
 		}
@@ -89,13 +96,20 @@ public class SimViewBlock extends SimViewObject{
 	}
 
 	private void drawStatics(Graphics g, float blockRate) {
+
+		try {
+			blockContainerCount = block.getContainerCount();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		g.setColor(Color.white);
 
 		int xx = (int) (initX * blockRate);
 
-		int yy = (int) ((initY + 10 + block.getBay() * (BlockManager.conH + BlockManager.hGap)) * blockRate);
+		int yy = (int) ((initY + 12 + block.getBay() * (BlockManager.conH + BlockManager.hGap)) * blockRate);
 
-		g.drawString(blockContainerCount + "/" + (int) totalSlot + "(" + (int) persent + "%)", xx, yy);
+		g.drawString(blockContainerCount + "/" + (int) totalSlot + "(" + (int) persent + "%)", xx - 5, yy);
 	}
 
 	private void drawBlock(Graphics g, float blockRate) {

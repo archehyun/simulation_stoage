@@ -122,6 +122,9 @@ public class BlockManager extends SimModelManager{
 	public void setEmpty(int blockID,Slot slot, boolean flag)
 	{
 		blocks[blockID].setEmpty(slot, flag);
+
+		this.notifyMonitor(new SimEvent());
+		;
 	}
 
 
@@ -142,7 +145,10 @@ public class BlockManager extends SimModelManager{
 	@Override
 	public void notifyMonitor(SimEvent message) {
 
+		message.add("type", "block");
 		message.add("blocks", blocks);
+
+		System.out.println("notify~~~~~~~~~~");
 
 		super.notifyMonitor(message);
 	}

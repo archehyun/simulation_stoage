@@ -35,8 +35,6 @@ public class CrossLandSideATC extends SimATC {
 
 	class ScheduledJob extends TimerTask {
 
-
-
 		   @Override
 		public void run() {
 			if (lastX == CrossLandSideATC.this.getX())

@@ -27,21 +27,31 @@ public class JobManager extends SimModelManager{
 
 	WorkOrderGenerate generate;
 
+	TPWorkOrderGenegete tpWorkGenerate[][];
+
+	public TPWorkOrderGenegete[][] getTpWorkGenerate() {
+		return tpWorkGenerate;
+	}
+
+	public int[] getTP(int blockID, int seaLandType) {
+
+		return tpWorkGenerate[blockID][seaLandType].getTP();
+
+	}
+
 	TPWorkOrderGenegete tpWorkGenerateSea[];
 
 	TPWorkOrderGenegete tpWorkGenerateLand[];
 
 	private static JobManager instance;
 
-	private int jobID;
+	private JobID jobID = new JobID();
 
 	public synchronized int getJobID() {
-		return jobID;
+		return jobID.getID();
 	}
 
-	public synchronized void updateJobID() {
-		jobID++;
-	}
+
 
 	private Random rn = new Random();
 
@@ -57,15 +67,30 @@ public class JobManager extends SimModelManager{
 
 		System.out.println("set block count:" + 2);
 		blockManager.setBlockCount(BlockManager.block);
-		generate = new WorkOrderGenerate();
+		/*generate = new WorkOrderGenerate();
 		tpWorkGenerateSea = new TPWorkOrderGenegete[2];
 		tpWorkGenerateLand = new TPWorkOrderGenegete[2];
 		for (int i = 0; i < 2; i++) {
 			tpWorkGenerateSea[i] = new TPWorkOrderGenegete(StoageEvent.SEA, i, 4);
 			tpWorkGenerateLand[i] = new TPWorkOrderGenegete(StoageEvent.LAND, i, 4);
-		}
+		}*/
 		this.simStart();
 
+	}
+
+	public void init() {
+
+		tpWorkGenerate = new TPWorkOrderGenegete[blockManager.block][2];
+
+		for (int i = 0; i < blockManager.block; i++) {
+			tpWorkGenerate[i][0] = new TPWorkOrderGenegete(StoageEvent.SEA, i, 4);
+			tpWorkGenerate[i][1] = new TPWorkOrderGenegete(StoageEvent.LAND, i, 4);
+		}
+
+	}
+
+	public void release(int block, int seaLandType, int tpIndex) {
+		tpWorkGenerate[block][seaLandType].release(tpIndex);
 	}
 
 	public static JobManager getInstance()
@@ -115,17 +140,21 @@ public class JobManager extends SimModelManager{
 		{
 			//generate.simStart();
 
-			for (int i = 0; i < tpWorkGenerateLand.length; i++) {
-				tpWorkGenerateLand[i].simStart();
-				tpWorkGenerateSea[i].simStart();
+			for (int i = 0; i < tpWorkGenerate.length; i++) {
+				for (int j = 0; j < tpWorkGenerate[i].length; j++) {
+					tpWorkGenerate[i][j].simStart();
+				}
+
 			}
 		}
 		else if(event.getEventMessage().equals("simstop"))
 		{
 			//generate.simStop();
-			for (int i = 0; i < tpWorkGenerateLand.length; i++) {
-				tpWorkGenerateLand[i].simStop();
-				tpWorkGenerateSea[i].simStop();
+			for (int i = 0; i < tpWorkGenerate.length; i++) {
+				for (int j = 0; j < tpWorkGenerate[i].length; j++) {
+					tpWorkGenerate[i][j].simStop();
+				}
+
 			}
 		}
 		node = null;
@@ -166,12 +195,7 @@ public class JobManager extends SimModelManager{
 		public boolean flag = false;
 		public synchronized int poll() {
 
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			/**/
 			int emptyIndex=0;
 			while ((emptyIndex=getEmptyTPIndex()) == -1) {
 				try {
@@ -193,6 +217,28 @@ public class JobManager extends SimModelManager{
 			notify();
 		}
 
+		public int[] getTP() {
+			// TODO Auto-generated method stub
+			return tp;
+		}
+
+	}
+
+	class JobID {
+
+		int count;
+
+		public JobID() {
+			count = 0;
+		}
+
+		public synchronized void update() {
+			count++;
+		}
+
+		public int getID() {
+			return count;
+		}
 	}
 
 
@@ -201,7 +247,8 @@ public class JobManager extends SimModelManager{
 
 
 		int blockID;
-		int seaLandType;
+
+		private int seaLandType;
 
 		int timer = 0;
 
@@ -216,41 +263,52 @@ public class JobManager extends SimModelManager{
 			System.out.println("init tpwork");
 		}
 
+		public int[] getTP() {
+			return tpqueue.getTP();
+		}
 
-		private synchronized void create(int tpIndex) {
-			StoageEvent node = new StoageEvent(getJobID(), SimEvent.TYPE_ORDER);
-			node.setEventType(SimEvent.TYPE_ORDER);
 
-			node.setSeaLandType(seaLandType);
-			int inOutType;
-			int n2 = rn.nextInt(10);
-			if (n2 > 5) {
-				inOutType = StoageEvent.INBOUND;
-			} else {
-				inOutType = StoageEvent.INBOUND;
+		public synchronized void release(int tpIndex) {
+			tpqueue.release(tpIndex);
+		}
+
+		private void create(int tpIndex) {
+
+			synchronized (jobID) {
+				StoageEvent node = new StoageEvent(getJobID(), SimEvent.TYPE_ORDER);
+				node.setEventType(SimEvent.TYPE_ORDER);
+
+				node.setSeaLandType(seaLandType);
+				int inOutType;
+				int n2 = rn.nextInt(10);
+				if (n2 > 5) {
+					inOutType = StoageEvent.INBOUND;
+				} else {
+					inOutType = StoageEvent.OUTBOUND;
+				}
+
+				node.setInOutType(inOutType);
+
+				Slot slot = selectSlot(blockID);
+
+				slot.setUsed(true);
+
+				node.setSlot(slot);
+
+				node.setTPIndex(tpIndex);
+
+				node.setX(slot.getRowIndex());
+
+				node.setY(slot.getBayIndex());
+
+				node.setBlockID(slot.getBlockID());
+
+				logger.info("generate order: " + node.getBlockID() + "-" + node.getSeaLandType() + "-jobID:" + getJobID());
+
+				manager.getATCManager(node.getBlockID()).append(node);
+
+				jobID.update();
 			}
-
-			node.setInOutType(inOutType);
-
-			Slot slot = selectSlot(blockID);
-
-			slot.setUsed(true);
-
-			node.setSlot(slot);
-
-			node.setTPIndex(tpIndex);
-
-			node.setX(slot.getRowIndex());
-
-			node.setY(slot.getBayIndex());
-
-			node.setBlockID(slot.getBlockID());
-
-			logger.info("generate order: " + node.getBlockID() + "-" + this.seaLandType + "-jobID:" + getJobID());
-
-			manager.getATCManager(node.getBlockID()).append(node);
-
-			updateJobID();
 
 
 		}
@@ -267,6 +325,12 @@ public class JobManager extends SimModelManager{
 				//logger.info("arrival tp at " + blockID + "-" + this.seaLandType + "-" + tpIndex);
 				create(tpIndex);
 				tpqueue.flag = true;
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
 
 
@@ -279,7 +343,7 @@ public class JobManager extends SimModelManager{
 				System.out.println("tp jobmanager");
 				flag = true;
 				thread = new Thread(this);
-				jobID = 0;
+				jobID = new JobID();
 				thread.start();
 			}
 		}
@@ -287,7 +351,7 @@ public class JobManager extends SimModelManager{
 		public void simStop() {
 			flag = false;
 			thread = null;
-			jobID = 0;
+			//jobID = 0;
 		}
 	}
 
@@ -405,7 +469,7 @@ public class JobManager extends SimModelManager{
 				manager.getATCManager(node.getBlockID()).append(node);
 
 				plusActiveOrder();
-				jobID++;
+				jobID.update();
 
 			} catch (NullPointerException e) {
 				System.err.println("error block:" + node.getBlockID());
@@ -436,7 +500,7 @@ public class JobManager extends SimModelManager{
 		 */
 		public void putOrder() throws Exception {
 
-			StoageEvent node = new StoageEvent(jobID, SimEvent.TYPE_ORDER);
+			StoageEvent node = new StoageEvent(jobID.getID(), SimEvent.TYPE_ORDER);
 
 			node.setEventType(SimEvent.TYPE_ORDER);
 			Slot slot;
@@ -476,7 +540,8 @@ public class JobManager extends SimModelManager{
 				manager.getATCManager(blockID).append(node);
 
 				plusActiveOrder();
-				jobID++;
+				jobID.update();
+				;
 
 
 			} catch (NullPointerException e) {
@@ -508,7 +573,7 @@ public class JobManager extends SimModelManager{
 				System.out.println("start jobmanager");
 				flag = true;
 				thread = new Thread(this);
-				jobID = 0;
+				//				jobID = 0;
 				thread.start();
 			}
 		}
@@ -517,7 +582,7 @@ public class JobManager extends SimModelManager{
 		{
 			flag = false;
 			thread = null;
-			jobID = 0;
+			//			jobID = 0;
 		}
 	}
 
@@ -557,7 +622,7 @@ public class JobManager extends SimModelManager{
 			if (commandStr.equals("W")) {
 
 				for (int i = 0; i < BlockManager.block; i++) {
-					StoageEvent node = new StoageEvent(jobID, SimEvent.TYPE_ORDER);
+					StoageEvent node = new StoageEvent(jobID.getID(), SimEvent.TYPE_ORDER);
 
 					slot = blockManager.getSlot(i, bay, row, tier);
 					try {
@@ -600,7 +665,7 @@ public class JobManager extends SimModelManager{
 
 			} else if (commandStr.equals("M")) {
 				//System.out.println("Move");
-				StoageEvent node = new StoageEvent(jobID, SimEvent.TYPE_COMMAND);
+				StoageEvent node = new StoageEvent(jobID.getID(), SimEvent.TYPE_COMMAND);
 				slot = blockManager.getSlot(0, bay, row, tier);
 
 				System.out.println("slot:" + slot);

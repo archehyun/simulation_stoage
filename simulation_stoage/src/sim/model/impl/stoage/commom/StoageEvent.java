@@ -109,6 +109,10 @@ public class StoageEvent extends SimEvent{
 
 	int tpIndex;
 
+	public int getTpIndex() {
+		return tpIndex;
+	}
+
 	public void setTPIndex(int tpIndex) {
 		this.tpIndex = tpIndex;
 	}

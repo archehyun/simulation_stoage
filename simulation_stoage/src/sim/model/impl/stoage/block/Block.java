@@ -256,10 +256,12 @@ public class Block implements IFSimModel {
 	public void deleteContainer()
 	{
 		containerCount--;
+
+		System.out.println("minus" + containerCount);
 	}
 
 	/**
-	 * @param bay
+	//	 * @param bay
 	 * @param row
 	 * @return
 	 */

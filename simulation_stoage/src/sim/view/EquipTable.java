@@ -12,11 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.atc.SimATC;
+import sim.model.impl.stoage.block.Block;
 import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.manager.ATCManager;
 import sim.view.framework.IFMonitor;
@@ -26,8 +28,6 @@ public class EquipTable extends JPanel implements IFMonitor {
 	private int blockID;
 
 	JTable table;
-
-	//ATCJobManager atcManager2 = CrossOverJobManager.getInstance();
 
 	ATCManager manager = ATCManager.getInstance();
 
@@ -57,8 +57,9 @@ public class EquipTable extends JPanel implements IFMonitor {
 	public EquipTable(int blockID) {
 
 		this.blockID = blockID;
+		manager.getATCManager(blockID).addMonitor(this);
 
-		manager.addMonitor(this);
+		//		manager.addMonitor(this);
 		blockManager.addMonitor(this);
 
 		table = new JTable();
@@ -69,10 +70,10 @@ public class EquipTable extends JPanel implements IFMonitor {
 		TableColumnModel colmodel = table.getColumnModel();
 
 		// Set column widths
-		colmodel.getColumn(0).setPreferredWidth(100);
+		colmodel.getColumn(0).setPreferredWidth(150);
 		colmodel.getColumn(0).setPreferredWidth(50);
-		colmodel.getColumn(1).setPreferredWidth(25);
-		colmodel.getColumn(2).setPreferredWidth(25);
+		colmodel.getColumn(1).setPreferredWidth(50);
+		colmodel.getColumn(2).setPreferredWidth(50);
 		colmodel.getColumn(3).setPreferredWidth(50);
 
 		this.setLayout(new BorderLayout());
@@ -82,7 +83,7 @@ public class EquipTable extends JPanel implements IFMonitor {
 			lblBlockID.setText("Block:" + blockID);
 
 			lblUtil = new JLabel();
-		*/
+		 */
 		JScrollPane comp = new JScrollPane(table);
 
 		this.add(comp);
@@ -97,60 +98,87 @@ public class EquipTable extends JPanel implements IFMonitor {
 
 	@Override
 	public void updateMonitor(SimEvent message) {
-		/*List li = (List) message.get("atc");
-		
-		if (li != null)
-		{
-			try {
-				model.update(li);
-		
-				table.tableChanged(new TableModelEvent(model));
-				repaint();
-		
-				table.setModel(model);
-		
-		
-			} catch (Exception e) {
-		
-				e.printStackTrace();
-		
+
+		String type = (String) message.get("type");
+		if (type == null)
+			return;
+		if (type.equals("atc")) {
+			SimATC atc = (SimATC) message.get("item");
+
+			if (atc != null) {
+				try {
+					model.update(atc);
+
+					table.tableChanged(new TableModelEvent(model));
+					repaint();
+
+					table.setModel(model);
+
+
+				} catch (Exception e) {
+
+					e.printStackTrace();
+
+				}
 			}
 		}
-		
-		
-		
-		String type = (String) message.get("type");
-		
+
+
 		if (type != null && type.equals("block")) {
-		
+
 			Block blocks[] = (Block[]) message.get("blocks");
-		
+
 			try {
 			int blockContainerCount = blocks[blockID].getContainerCount();
-		
+
 			int totalSlot = blocks[blockID].getTotalSlot();
-		
+
 			float persent = (float) blockContainerCount / (float) totalSlot * 100;
-		
-		
+
+
 			lblUtil.setText(blockContainerCount + "/" + totalSlot + "(" + String.format("%.1f", persent) + "%)");
 			} catch (Exception e) {
 				lblUtil.setText(e.getMessage());
 			}
-		}*/
+		}
 	}
 
 	class SimpleTableModel extends AbstractTableModel {
 		private Object[][] data = {};
 
-		private String[] columnNames = { "ATCID", "Busy", "Bay", "Row", "Count" };
+		private String[] columnNames = { "ATCID", "Busy", "Row", "Bay", "Count" };
 
 		private Class[] columnClass = { Integer.class, Boolean.class, String.class, String.class, Integer.class };
-		private Object[][] rowData = new Object[][] {
-				{ new Integer(1), true, "Tom", "Male", 1 }, { new Integer(2), true, "Jack", "Female", 1 } };
+
+		private Object[][] rowData = {};
 
 			public SimpleTableModel() {
 			}
+
+		public void update(SimATC atcItem) {
+
+			for (int i = 0; i < rowData.length; i++) {
+				if (rowData[i][0].equals(atcItem.getSimName())) {
+					rowData[i][0] = atcItem.getSimName();
+					rowData[i][1] = atcItem.isIdle();
+					rowData[i][2] = atcItem.getX();
+					rowData[i][3] = atcItem.getY();
+					rowData[i][4] = atcItem.getWorkCount();
+					return;
+				}
+			}
+			Object[][] temp = new Object[rowData.length + 1][5];
+			for (int i = 0; i < rowData.length; i++) {
+				temp[i] = rowData[i];
+			}
+			temp[rowData.length][0] = atcItem.getSimName();
+			temp[rowData.length][1] = atcItem.isIdle();
+			temp[rowData.length][2] = atcItem.getX();
+			temp[rowData.length][3] = atcItem.getY();
+			temp[rowData.length][4] = atcItem.getWorkCount();
+			rowData = temp;
+
+		}
 
 			public void update(List li) {
 
@@ -162,7 +190,7 @@ public class EquipTable extends JPanel implements IFMonitor {
 				if (atcItem.getBlockID() == blockID) {
 					blockATCli.add(atcItem);
 				}
-			}
+				}
 			rowData = new Object[blockATCli.size()][5];
 
 			for (int i = 0; i < blockATCli.size(); i++) {
@@ -174,6 +202,8 @@ public class EquipTable extends JPanel implements IFMonitor {
 				rowData[i][2] = atcItem.getX();
 				rowData[i][3] = atcItem.getY();
 				rowData[i][4] = atcItem.getWorkCount();
+
+				//System.out.println("atc x:" + atcItem.getX());
 			}
 
 			}
@@ -254,6 +284,17 @@ public class EquipTable extends JPanel implements IFMonitor {
 		//lblBlockID.setText(blockID + "��");
 
 		return pnMain;
+
+	}
+
+	public void updateView() {
+
+		model = new SimpleTableModel();
+
+		model.update(ATCManager.getInstance().getATCManager(blockID).getATCs());
+		table.setModel(model);
+		table.updateUI();
+
 
 	}
 

@@ -53,10 +53,10 @@ public class SimMain {
 	public void render(double delta) {
 
 		Iterator<IFSimModel> iter = list.iterator();
+
 		while (iter.hasNext()) {
 			iter.next().update(delta);
 		}
-
 	}
 
 	public void setCanvas(SimCanvas canvas) {
@@ -90,9 +90,13 @@ public class SimMain {
 		try {
 			NodeList blockList = element.getElementsByTagName("block");
 
+
 			blockManager.block = blockList.getLength();
 
+
 			blockManager.blockInit();
+
+			JobManager.getInstance().init();
 
 			if (blockList.getLength() > 0) {
 				//반복문 이용
@@ -120,7 +124,6 @@ public class SimMain {
 							createATC(blockID, atcManager, atcNode);
 						}
 					}
-
 				}
 			}
 		} catch (Exception e) {
@@ -132,32 +135,33 @@ public class SimMain {
 
 		Element atcElement = (Element) atcNode;
 		String type = atcElement.getAttribute("type");
-		atcElement.getAttribute("id");
-		atcElement.getAttribute("x");
-		atcElement.getAttribute("y");
-		NodeList initLocations = atcElement.getElementsByTagName("initLcation");
-		Element initLocation = (Element) initLocations.item(0);
+		String strID=atcElement.getAttribute("id");
+		String strX = atcElement.getAttribute("x");
+		String strY = atcElement.getAttribute("y");
+
+		float w = BlockManager.conW * BlockManager.ROW + 4;
+		float h = BlockManager.conH;
 
 		SimATC atc = null;
+
 		if (atcManager.getType().equals("cross")) {
 			if (type.equals("sea")) {
-				atc = new CrossSeaSideATC("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_SEA);
+				atc = new CrossSeaSideATC("atc_sea-" + blockID, Integer.parseInt(strID), blockID, Integer.parseInt(strX), Integer.parseInt(strY), w, h, SimATC.TYPE_SEA);
 			} else if (type.equals("land")) {
-				atc = new CrossLandSideATC("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_LAND);
+				atc = new CrossLandSideATC("atc_land-" + blockID, Integer.parseInt(strID), blockID, 0, 25, w, h, SimATC.TYPE_LAND);
 			}
 
 			else if (type.equals("new_sea")) {
-				atc = new CrossATC2("atc_sea-" + blockID, blockID + SimATC.SEA_SIDE, blockID, 0, 0, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_SEA);
+				atc = new CrossATC2("atc_sea-" + blockID, Integer.parseInt(strID), blockID, Integer.parseInt(strX), Integer.parseInt(strY), w, h, SimATC.TYPE_SEA);
 			}
 			else if (type.equals("new_land")) {
-				atc = new CrossATC2("atc_land-" + blockID, blockID + SimATC.LAND_SIDE, blockID, 0, 25, BlockManager.conW * BlockManager.ROW + 4, BlockManager.conH, SimATC.TYPE_LAND);
+				atc = new CrossATC2("atc_land-" + blockID, Integer.parseInt(strID), blockID, Integer.parseInt(strX), Integer.parseInt(strY), w, h, SimATC.TYPE_LAND);
 			}
-			else {
-				System.out.println("type:" + type);
-			}
-
 			list.add(atc);
 		}
+
+		NodeList initLocations = atcElement.getElementsByTagName("initLcation");
+		Element initLocation = (Element) initLocations.item(0);
 		atc.setInitBlockLocation(Integer.parseInt(initLocation.getAttribute("row")), Integer.parseInt(initLocation.getAttribute("bay")));
 		atc.setSpeed(ATCJobManager.SPEED);
 		atcManager.addSimModel(atc);
