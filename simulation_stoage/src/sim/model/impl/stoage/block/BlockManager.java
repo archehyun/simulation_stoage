@@ -55,6 +55,9 @@ public class BlockManager extends SimModelManager{
 		}
 	}
 
+	/**
+	 * @param blockID
+	 */
 	public void blockInit(int blockID) {
 		Block block = blocks[blockID];
 
@@ -69,9 +72,11 @@ public class BlockManager extends SimModelManager{
 				}
 			}
 		}
-
 	}
 
+	/**
+	 *
+	 */
 	public void blockInit()
 	{
 
@@ -124,7 +129,6 @@ public class BlockManager extends SimModelManager{
 		blocks[blockID].setEmpty(slot, flag);
 
 		this.notifyMonitor(new SimEvent());
-		;
 	}
 
 
@@ -147,8 +151,6 @@ public class BlockManager extends SimModelManager{
 
 		message.add("type", "block");
 		message.add("blocks", blocks);
-
-		System.out.println("notify~~~~~~~~~~");
 
 		super.notifyMonitor(message);
 	}

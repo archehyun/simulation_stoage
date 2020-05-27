@@ -234,6 +234,7 @@ public class Block implements IFSimModel {
 	{
 		slot.setEmpty(flag);
 
+
 		if(flag)
 		{
 			deleteContainer();
@@ -249,15 +250,14 @@ public class Block implements IFSimModel {
 		return block_slots[bay][row][tier];
 	}
 
-	public void insertContainer()
+	public synchronized void insertContainer()
 	{
 		containerCount++;
 	}
-	public void deleteContainer()
+
+	public synchronized void deleteContainer()
 	{
 		containerCount--;
-
-		System.out.println("minus" + containerCount);
 	}
 
 	/**

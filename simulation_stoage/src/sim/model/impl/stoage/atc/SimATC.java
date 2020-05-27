@@ -16,7 +16,7 @@ import sim.view.framework.Vector2;
  * @param <Canvas3D>
  *
  */
-public abstract class SimATC<Canvas3D> extends SimModel {
+public abstract class SimATC extends SimModel {
 
 	public int inOutType;
 
@@ -49,10 +49,10 @@ public abstract class SimATC<Canvas3D> extends SimModel {
 	//ATC Loation Position;
 	public final Vector2 position;
 
-	//占쏙옙체 占쏙옙치
+	//initiation Point
 	public final Vector2 initPosition = new Vector2();
 
-	// 占쏙옙체 占쏙옙占�
+	// atc bounds
 	public final Rectangle bounds;
 
 	public final Vector2 velocity;

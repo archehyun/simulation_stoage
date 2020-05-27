@@ -73,9 +73,8 @@ public class CrossOverJobManager extends ATCJobManager {
 		atcJob.add("atc", list);
 
 		((StoageEvent) atcJob).getSlot().getBlock().getBlockID();
-		//divied(blockID, atcJob);
-		sideWorkACT(atcJob);
-		//minWorkACT(blockID, atcJob);
+
+		setATCWork(atcJob);
 
 		if (atcJob == null)
 			System.err.println("error");
@@ -83,6 +82,12 @@ public class CrossOverJobManager extends ATCJobManager {
 
 	}
 
+	private void setATCWork(SimEvent atcJob) {
+		sideWorkACT(atcJob);
+		//divied(blockID, atcJob);
+
+		//minWorkACT(blockID, atcJob);
+	}
 	//SimEvent atcJob;
 
 	private void divied(int blockID, SimEvent atcJob) {

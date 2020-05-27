@@ -9,6 +9,12 @@ import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
 
+/**
+ * @deprecated
+ * @author archehyun
+ *
+ */
+@Deprecated
 public class CrossSeaSideATC extends SimATC {
 
 

@@ -41,7 +41,8 @@ public class ATCMove2 {
 
 
 	float bayDirection = 0;
-	int x;
+
+	//int x;
 
 
 	public float getBaySpeed() {
@@ -179,9 +180,6 @@ public class ATCMove2 {
 			int destinationY = (int) atc.getDestination().y;
 			if (destinationY > currentY) {
 				this.setBayDirection(DOWN * seaLandType);
-
-				//System.out.println("down:" + destinationY + ", " + currentY);
-
 			} else if (destinationY < currentY) {
 				this.setBayDirection(UP * seaLandType);
 			} else {
@@ -207,7 +205,6 @@ public class ATCMove2 {
 				this.setRowDirection(STOP);
 
 				this.setRowMove(false);
-				//System.out.println("row arrival");
 			}
 			currentX2 += getRowSpeed();
 

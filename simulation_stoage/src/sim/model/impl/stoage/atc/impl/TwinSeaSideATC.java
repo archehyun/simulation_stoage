@@ -11,9 +11,11 @@ import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
 
 /**
+ * @deprecated
  * @author archehyun
  *
  */
+@Deprecated
 public class TwinSeaSideATC extends SimATC {
 
 

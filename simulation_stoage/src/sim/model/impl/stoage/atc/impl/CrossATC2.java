@@ -12,8 +12,6 @@ public class CrossATC2 extends SimATC {
 
 	StoageEvent activeEvent;
 
-
-
 	public CrossATC2(String simName, int id, int blockID, float row, float bay, float width, float height, int type) {
 		super(simName, id, blockID, row, bay, width, height, type);
 
@@ -34,8 +32,7 @@ public class CrossATC2 extends SimATC {
 
 		initPosition.y = (getInitBay()) * (BlockManager.conH + BlockManager.hGap);
 
-		System.out.println("initX:" + initPosition.x);
-		System.out.println("set init y:" + initPosition.y + ", current:" + this.getLocation().y);
+		logger.info("init Point:" + initPosition);
 
 	}
 
@@ -58,6 +55,7 @@ public class CrossATC2 extends SimATC {
 	}
 
 	StoageEvent event;
+
 	@Override
 	public void process(SimNode node) throws InterruptedException {
 
@@ -65,14 +63,12 @@ public class CrossATC2 extends SimATC {
 
 		this.setInOutType(activeEvent.getInOutType());
 		activeEvent.workStep = 1;
-		logger.debug("destination:" + this.getDestination().x + ", " + this.getLocation().x);
+		logger.info("destination:" + this.getDestination().x + ", " + this.getLocation().x);
 
 		setBusy();
 	}
 
 	ATCMove2 move = new ATCMove2(this);
-
-	//int workStep = 0;
 
 	private final int STEP1 = 1;
 
@@ -103,6 +99,9 @@ public class CrossATC2 extends SimATC {
 	}
 
 
+	/**
+	 * @param workStep
+	 */
 	private void inboundWork(int workStep) {
 
 		switch (workStep) {
@@ -153,8 +152,6 @@ public class CrossATC2 extends SimATC {
 				move.setBayMove(true);
 				move.setRowMove(true);
 			}
-
-
 
 			break;
 		case STEP4:

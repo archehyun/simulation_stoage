@@ -25,6 +25,10 @@ import sim.model.queue.SimNode;
  */
 public class JobManager extends SimModelManager{
 
+
+
+
+
 	WorkOrderGenerate generate;
 
 	TPWorkOrderGenegete tpWorkGenerate[][];
@@ -65,15 +69,8 @@ public class JobManager extends SimModelManager{
 	private JobManager(String simName) {
 		super(simName);
 
-		System.out.println("set block count:" + 2);
 		blockManager.setBlockCount(BlockManager.block);
-		/*generate = new WorkOrderGenerate();
-		tpWorkGenerateSea = new TPWorkOrderGenegete[2];
-		tpWorkGenerateLand = new TPWorkOrderGenegete[2];
-		for (int i = 0; i < 2; i++) {
-			tpWorkGenerateSea[i] = new TPWorkOrderGenegete(StoageEvent.SEA, i, 4);
-			tpWorkGenerateLand[i] = new TPWorkOrderGenegete(StoageEvent.LAND, i, 4);
-		}*/
+
 		this.simStart();
 
 	}
@@ -239,10 +236,17 @@ public class JobManager extends SimModelManager{
 		public int getID() {
 			return count;
 		}
+
 	}
 
 
 
+	/**
+	 *
+	 * 대기 행렬모형 구현
+	 * @author LDCC
+	 *
+	 */
 	class TPWorkOrderGenegete implements Runnable {
 
 
@@ -266,6 +270,12 @@ public class JobManager extends SimModelManager{
 		public int[] getTP() {
 			return tpqueue.getTP();
 		}
+
+
+
+		Random rn = new Random();
+
+
 
 
 		public synchronized void release(int tpIndex) {

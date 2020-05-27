@@ -15,9 +15,11 @@ import sim.model.queue.SimNode;
 
 /**
  * cross type atc
- * @author LDCC
+ *@deprecated
+ * @author archehyun
  *
  */
+@Deprecated
 public class CrossLandSideATC extends SimATC {
 
 	MyTimer time;

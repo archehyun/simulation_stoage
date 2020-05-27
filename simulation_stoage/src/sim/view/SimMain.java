@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,6 +83,47 @@ public class SimMain {
 		xml = documentBuilder.parse(ClassLoader.getSystemResource("layout/layout.xml").toURI().toString());
 
 		element = xml.getDocumentElement();
+
+	}
+
+	public void waitingModel() {
+
+		int timeInit = 2000;
+		int time = 0;
+		int timeStep = 1;
+		int tpump = 0;// 고객의 봉사 시간
+		int queue = 0;
+		int u;
+		int arrival = 0;
+		Random rn = new Random();
+		while (time < timeInit) {
+			// call random
+			time += timeStep;
+			u = rn.nextInt(10);
+
+			if (u < 2) {
+
+				System.out.println("arrival:" + time);
+				arrival = 1;
+				queue += arrival;
+
+			}
+
+			if (tpump > 0) {
+				tpump -= timeStep;
+				if (tpump < 0) {
+					tpump = 0;
+				}
+			}
+
+			if (tpump == 0 && queue != 0) {
+				queue -= 1;
+				tpump = 10;
+			}
+
+		}
+
+		//System.out.println("totalArrival:" + totalArrival + "aveque:" + aveque + ", avgwt:" + avgwt);
 
 	}
 
