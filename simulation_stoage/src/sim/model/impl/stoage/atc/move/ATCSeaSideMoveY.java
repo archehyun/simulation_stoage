@@ -24,7 +24,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 				atc.minusY();
 			}
 			try {
-				Thread.sleep(atc.getSpeed());
+				Thread.sleep((long) atc.getSpeed());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -53,7 +53,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 				atc.minusY();
 			}
 			try {
-				Thread.sleep(atc.getSpeed());
+				Thread.sleep((long) atc.getSpeed());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -107,7 +107,7 @@ public class ATCSeaSideMoveY extends ATCMove {
 			atc.arrival();
 			jobManager.release("SeaSideMove");
 			break;
-		case StoageEvent.MOVE:
+		case StoageEvent.COMMAND_MOVE:
 			moveDestination(job);
 			break;
 

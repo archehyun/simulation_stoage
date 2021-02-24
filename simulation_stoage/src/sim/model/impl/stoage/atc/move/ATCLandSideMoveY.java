@@ -33,7 +33,7 @@ public class ATCLandSideMoveY extends ATCMove {
 				atc.minusY();
 			}
 			try {
-				Thread.sleep(atc.getSpeed());
+				Thread.sleep((long) atc.getSpeed());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -57,7 +57,7 @@ public class ATCLandSideMoveY extends ATCMove {
 				atc.minusY();
 			}
 			try {
-				Thread.sleep(atc.getSpeed());
+				Thread.sleep((long) atc.getSpeed());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -122,7 +122,7 @@ public class ATCLandSideMoveY extends ATCMove {
 			atc.arrival();
 			atc.plusWorkCount();
 			break;
-		case StoageEvent.MOVE:
+		case StoageEvent.COMMAND_MOVE:
 			System.out.println("order tye");
 			moveDestination(job);
 			break;

@@ -4,14 +4,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import sim.model.core.IFSimModel;
+import sim.model.queue.SimNode;
+
 /**
- * �� ���� ǥ�� Ŭ����
+ * 占쏙옙 占쏙옙占쏙옙 표占쏙옙 클占쏙옙占쏙옙
  * @author archehyun
  *
  */
-public class Block {
+public class Block implements IFSimModel {
+
+	public static final int FULL_TP = 1;
+
+	public static final int EMPTY_TP = 0;
 
 	int x, y;
+
+	int TP[];
+
+	public int[] getTP() {
+		return TP;
+	}
 
 	public int getX() {
 		return x;
@@ -107,6 +120,8 @@ public class Block {
 		// init slot count
 		totalSlot = bay*row*tier;
 
+		TP = new int[row];
+
 		containerCount =0;
 
 		block = new int[bay][row][tier];
@@ -122,13 +137,14 @@ public class Block {
 				}
 			}
 		}
+		System.out.println("init block:" + blockID);
 	}
 
 	public float getBlockPersent() throws Exception {
 		return getContainerCount() / totalSlot;
 	}
 
-	// ��ü �����̳� ��
+	//
 	public int getContainerCount() throws Exception
 	{
 		if (containerCount > totalSlot)
@@ -136,7 +152,7 @@ public class Block {
 		return containerCount;
 	}
 
-	// ä���� �ִ� SLOT �� �ֻ��� Slot ��ȯ
+	// 채占쏙옙占쏙옙 占쌍댐옙 SLOT 占쏙옙 占쌍삼옙占쏙옙 Slot 占쏙옙환
 	Random rn = new Random();
 	List<Slot> upperSlot = new LinkedList<Slot>();
 
@@ -147,7 +163,6 @@ public class Block {
 	 */
 	public Slot selectFilledUpperSlot()
 	{
-
 		upperSlot.clear();
 
 		for(int i=0;i<bay;i++)
@@ -156,14 +171,14 @@ public class Block {
 			{
 				for(int z=0;z<tier;z++)
 				{
-					if(z==tier-1)// �� ���, �Ʒ� ��������� �ȵ�
+					if (z == tier - 1)//
 					{
 						if(!block_slots[i][j][z].isEmpty())
 						{
 							upperSlot.add( block_slots[i][j][z]);
 						}
 					}
-					if(z<tier-1&&!block_slots[i][j][z].isEmpty()&&block_slots[i][j][z+1].isEmpty())// �� ���, �Ʒ� ��������� �ȵ�
+					if (z < tier - 1 && !block_slots[i][j][z].isEmpty() && block_slots[i][j][z + 1].isEmpty())// 占쏙옙 占쏙옙占�, 占싣뤄옙 占쏙옙占쏙옙占쏙옙占쏙옙占� 占싫듸옙
 					{
 						upperSlot.add(block_slots[i][j][z]);
 					}
@@ -173,12 +188,12 @@ public class Block {
 		return upperSlot.get(rn.nextInt(upperSlot.size()));
 	}
 
-	// ��� �ִ� ��ġ �ϳ� ��ȯ
+	// 占쏙옙占� 占쌍댐옙 占쏙옙치 占싹놂옙 占쏙옙환
 
 	/**
 	 * @return
 	 */
-	public Slot selectEmptySlot()
+	public synchronized Slot selectEmptySlot()
 	{
 		emptySlot.clear();
 		do {
@@ -188,20 +203,20 @@ public class Block {
 				{
 					for (int z = 0; z < tier; z++)
 					{
-						if (z == 0)// �ٴ�, ���� ����־�� ��
+						if (z == 0)// 占쌕댐옙, 占쏙옙占쏙옙 占쏙옙占쏙옙羚占쏙옙 占쏙옙
 						{
 							if (block_slots[i][j][z].isEmpty() && block_slots[i][j][z + 1].isEmpty() && !block_slots[i][j][z].isUsed()) {
 								emptySlot.add(block_slots[i][j][z]);
 
 							}
 
-						} else if (z == tier - 1)// �� ���, �Ʒ� ��������� �ȵ�
+						} else if (z == tier - 1)// 占쏙옙 占쏙옙占�, 占싣뤄옙 占쏙옙占쏙옙占쏙옙占쏙옙占� 占싫듸옙
 						{
 							if (block_slots[i][j][z].isEmpty() && !block_slots[i][j][z - 1].isEmpty() && !block_slots[i][j][z].isUsed()) {
 								emptySlot.add(block_slots[i][j][z]);
 							}
 						}
-						else //�߰� ���� ��� �ְ� �Ʒ��� ���־�� ��
+						else //占쌩곤옙 占쏙옙占쏙옙 占쏙옙占� 占쌍곤옙 占싣뤄옙占쏙옙 占쏙옙占쌍억옙占� 占쏙옙
 						{
 							if (!block_slots[i][j][z - 1].isEmpty() && block_slots[i][j][z].isEmpty() && block_slots[i][j][z + 1].isEmpty() && !block_slots[i][j][z].isUsed()) {
 								emptySlot.add(block_slots[i][j][z]);
@@ -211,12 +226,14 @@ public class Block {
 				}
 			}
 		} while (emptySlot.size() == 0);
+
 		return emptySlot.get(rn.nextInt(emptySlot.size()));
 	}
 
 	public void setEmpty(Slot slot, boolean flag)
 	{
 		slot.setEmpty(flag);
+
 
 		if(flag)
 		{
@@ -233,17 +250,18 @@ public class Block {
 		return block_slots[bay][row][tier];
 	}
 
-	public void insertContainer()
+	public synchronized void insertContainer()
 	{
 		containerCount++;
 	}
-	public void deleteContainer()
+
+	public synchronized void deleteContainer()
 	{
 		containerCount--;
 	}
 
 	/**
-	 * @param bay
+	//	 * @param bay
 	 * @param row
 	 * @return
 	 */
@@ -265,6 +283,18 @@ public class Block {
 	public void setLocation(int x, int y) {
 		this.x = x;
 		this.y = y;
+
+	}
+
+	@Override
+	public void append(SimNode node) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void update(double delta) {
+		// TODO Auto-generated method stub
 
 	}
 }

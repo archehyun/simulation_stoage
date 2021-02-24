@@ -9,6 +9,12 @@ import sim.model.impl.stoage.block.BlockManager;
 import sim.model.impl.stoage.commom.StoageEvent;
 import sim.model.queue.SimNode;
 
+/**
+ * @deprecated
+ * @author archehyun
+ *
+ */
+@Deprecated
 public class CrossSeaSideATC extends SimATC {
 
 
@@ -31,7 +37,7 @@ public class CrossSeaSideATC extends SimATC {
 
 		this.initPosition.x = blockID * BlockManager.BLOCK_GAP + BlockManager.magin;
 
-		this.initPosition.y = getInitY() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin - BlockManager.conH;
+		this.initPosition.y = getInitBay() * (BlockManager.conH + BlockManager.hGap) + BlockManager.magin - BlockManager.conH;
 
 		//position.y = initPosition.y;
 
@@ -73,7 +79,7 @@ public class CrossSeaSideATC extends SimATC {
 
 		StoageEvent event = (StoageEvent) atcJob;
 
-		notifyMonitor("sea:process:" + this.getSimName() + "initY:" + this.getInitY() + ",currentY:" + this.getY() + ", Y:" + event.getY());
+		notifyMonitor("sea:process:" + this.getSimName() + "initY:" + this.getInitBay() + ",currentY:" + this.getY() + ", Y:" + event.getY());
 
 		atcJob = null;
 	}

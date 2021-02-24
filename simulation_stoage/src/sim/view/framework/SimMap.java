@@ -8,9 +8,11 @@ import map.cavas.DefaultCanvas;
 import map.cavas.DrawObject;
 
 /**
+ * @deprecated
  * @author archehyun
  *
  */
+@Deprecated
 public class SimMap extends DefaultCanvas implements Runnable{
 
 	Thread renderingThread;

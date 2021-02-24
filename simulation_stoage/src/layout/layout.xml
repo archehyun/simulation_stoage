@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <block id="0" x="15" y="15" conW="2" conH="6"  row="4" bay="25" tier="5" type="cross">    
-    	<atcMager id="1" >
+    <block id="0" x="15" y="15" conW="2" conH="6"  row="4" bay="25" tier="5" type="cross" use="true">    
+    	<atcMager id="0" >
     		<type>cross</type>
-    	</atcMager>    	
+    	</atcMager>
+    	<atc id="1" x="0" y="0" width="0" height="0" type ="new_sea">
+    			<initLcation bay="0" row="0"></initLcation>
+    	</atc>
+    	<atc id="2" x="0" y="25" width="0" height="0" type="new_land">
+    			<initLcation bay="25" row="0"></initLcation>
+    	</atc>
+    	<tp id="0" x="1" y="1" type="sea" count="4"/>
+    	<tp id="1" x="1" y="1" type="land" count="4"/>
+    	<!--      	
     	<atc id="1" x="0" y="0" width="0" height="0" type ="sea">
     			<initLcation bay="0" row="0"></initLcation>
     	</atc>
+    	
     	<atc id="2" x="0" y="0" width="0" height="0" type="land">
     			<initLcation bay="25" row="0"></initLcation>
     	</atc>
+    	-->
     </block>
-    
+        <block id="1" x="65" y="15" conW="2" conH="6"  row="4" bay="25" tier="5" type="cross" use="true">    
+    	<atcMager id="1" >
+    		<type>cross</type>
+    	</atcMager>
+    	<atc id="1" x="0" y="0" width="0" height="0" type ="new_sea">
+    			<initLcation bay="0" row="0"></initLcation>
+    	</atc>
+    	<atc id="2" x="0" y="25" width="0" height="0" type="new_land">
+    			<initLcation bay="25" row="0"></initLcation>
+    	</atc>
+    	<tp id="0" x="1" y="1" type="sea" count="4"/>
+    	<tp id="1" x="1" y="1" type="land" count="4"/>
+    	<!--      	
+    	<atc id="1" x="0" y="0" width="0" height="0" type ="sea">
+    			<initLcation bay="0" row="0"></initLcation>
+    	</atc>
+    	
+    	<atc id="2" x="0" y="0" width="0" height="0" type="land">
+    			<initLcation bay="25" row="0"></initLcation>
+    	</atc>
+    	-->
+    </block>
+    <!--  
     <block id="1" x="65" y="15" conW="0" conH="0" row="4" bay="25" tier="5" type="cross">
     <atcMager id="2" >    		
     		<type>cross</type>
@@ -24,4 +57,5 @@
     			<initLcation bay="25" row="0"></initLcation>
     	</atc>
     </block>
+    -->
 </root>

@@ -12,6 +12,10 @@ public class BlockManager extends SimModelManager{
 
 	public static float blockRate = (float) 1.0;
 
+	public static float blockWRate = (float) 1.0;
+
+	public static float blockHRate = (float) 1.0;
+
 	private static BlockManager instance;
 
 	public static int gap = 15;
@@ -51,6 +55,9 @@ public class BlockManager extends SimModelManager{
 		}
 	}
 
+	/**
+	 * @param blockID
+	 */
 	public void blockInit(int blockID) {
 		Block block = blocks[blockID];
 
@@ -65,9 +72,11 @@ public class BlockManager extends SimModelManager{
 				}
 			}
 		}
-
 	}
 
+	/**
+	 *
+	 */
 	public void blockInit()
 	{
 
@@ -118,12 +127,12 @@ public class BlockManager extends SimModelManager{
 	public void setEmpty(int blockID,Slot slot, boolean flag)
 	{
 		blocks[blockID].setEmpty(slot, flag);
+
+		this.notifyMonitor(new SimEvent());
 	}
 
 
 	public Block getBlock(int blockID) {
-
-		System.out.println(blocks.length);
 
 		return blocks[blockID];
 	}
@@ -140,6 +149,7 @@ public class BlockManager extends SimModelManager{
 	@Override
 	public void notifyMonitor(SimEvent message) {
 
+		message.add("type", "block");
 		message.add("blocks", blocks);
 
 		super.notifyMonitor(message);

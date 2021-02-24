@@ -12,7 +12,7 @@ import sim.model.impl.stoage.manager.ATCJobManager;
 import sim.model.queue.SimNode;
 
 /**
- * @author 박창현
+ * @author 諛�李쏀��
  *
  */
 public class TwinJobManager extends ATCJobManager {
@@ -46,7 +46,7 @@ public class TwinJobManager extends ATCJobManager {
 				if ((model.getAtcID() % 100) == blockId) {
 
 					if (model.getAtcID() == ee.getATCID()) {
-						ee.orderType = StoageEvent.MOVE;
+						ee.orderType = StoageEvent.COMMAND_MOVE;
 						model.append(ee);
 						logger.debug("append atc order:" + atcJob.getSimName());
 					}
@@ -140,10 +140,10 @@ public class TwinJobManager extends ATCJobManager {
 		SimEvent event = (SimEvent) node;
 		switch (event.getEventType()) {
 
-		case SimEvent.COMMAND:
+		case SimEvent.TYPE_COMMAND:
 			commandProcess(event);
 			break;
-		case SimEvent.ORDER:
+		case SimEvent.TYPE_ORDER:
 			orderProcess(event);
 			break;
 

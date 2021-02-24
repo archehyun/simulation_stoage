@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import sim.model.core.SimEvent;
 import sim.model.impl.stoage.block.Block;
 import sim.model.impl.stoage.block.BlockManager;
+import sim.model.impl.stoage.commom.JobManager;
+import sim.model.impl.stoage.commom.StoageEvent;
 import sim.view.framework.SimViewObject;
 
 public class SimViewBlock extends SimViewObject{
@@ -13,7 +15,7 @@ public class SimViewBlock extends SimViewObject{
 
 	private int blockContainerCount;
 
-	private int xx, yy, ww, hh;
+	private int xx, yy;
 
 	private Block block;
 
@@ -26,15 +28,15 @@ public class SimViewBlock extends SimViewObject{
 	private float persent;
 
 	/**
-	 * @param blockID
+	 * @param id
 	 * @param x
 	 * @param y
 	 */
-	public SimViewBlock(int blockID, int x, int y)
+	public SimViewBlock(int id, int x, int y)
 	{
-		super(blockID, x, y, 0, 0);
+		super(id, x, y, 0, 0);
 
-		block=manager.getBlock(blockID);
+		block=manager.getBlock(id);
 
 		totalSlot = block.getTotalSlot();
 
@@ -44,6 +46,73 @@ public class SimViewBlock extends SimViewObject{
 	@Override
 	public void draw(Graphics g) {
 
+		drawTP(g, BlockManager.blockRate);
+
+		drawBlock(g, BlockManager.blockRate);
+
+		drawStatics(g, BlockManager.blockRate);
+
+
+	}
+
+	private void drawTP(Graphics g, float blockRate) {
+
+		g.setColor(Color.blue);
+		float ww = (BlockManager.conW * blockRate);
+		float hh = (BlockManager.conH * blockRate);
+
+		int xx,yy;
+		//sea side
+
+		int Sea_TP[] = JobManager.getInstance().getTP(block.getBlockID(), StoageEvent.SEA);
+
+
+
+		for (int j = 0; j < Sea_TP.length; j++) {
+			xx = (int) ((initX + j * (BlockManager.conW + BlockManager.wGap)) * blockRate);
+			yy = (int) ((initY - (BlockManager.conH + BlockManager.hGap)) * blockRate);
+
+			if (Sea_TP[j] == Block.FULL_TP)
+			{
+			g.fillRect(xx, yy, (int) ww, (int) hh);
+			} else if (Sea_TP[j] == Block.EMPTY_TP) {
+				g.drawRect(xx, yy, (int) ww, (int) hh);
+			}
+		}
+
+		int Land_TP[] = JobManager.getInstance().getTP(block.getBlockID(), StoageEvent.LAND);
+		//land side
+		for (int j = 0; j < block.getRow(); j++) {
+			xx = (int) ((initX + j * (BlockManager.conW + BlockManager.wGap)) * blockRate);
+			yy = (int) ((initY + (block.getBay()) * (BlockManager.conH + BlockManager.hGap)) * blockRate);
+
+			if (Land_TP[j] == Block.FULL_TP) {
+			g.fillRect(xx, yy, (int) ww, (int) hh);
+			} else if (Land_TP[j] == Block.EMPTY_TP) {
+				g.drawRect(xx, yy, (int) ww, (int) hh);
+			}
+		}
+
+	}
+
+	private void drawStatics(Graphics g, float blockRate) {
+
+		try {
+			blockContainerCount = block.getContainerCount();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		g.setColor(Color.white);
+
+		int xx = (int) (initX * blockRate);
+
+		int yy = (int) ((initY + 12 + block.getBay() * (BlockManager.conH + BlockManager.hGap)) * blockRate);
+
+		g.drawString(blockContainerCount + "/" + (int) totalSlot + "(" + (int) persent + "%)", xx - 5, yy);
+	}
+
+	private void drawBlock(Graphics g, float blockRate) {
 
 		g.setColor(Color.CYAN);
 
@@ -58,7 +127,6 @@ public class SimViewBlock extends SimViewObject{
 
 					g.setColor(Color.gray);
 
-
 					break;
 				case 3:
 
@@ -71,52 +139,37 @@ public class SimViewBlock extends SimViewObject{
 					g.setColor(Color.BLUE);
 
 				case 5:
-
-
 					g.setColor(Color.RED);
 
 					break;
 				default:
 
 					g.setColor(Color.CYAN);
-				break;
+					break;
 
 				}
 
-				xx = (int) ((initX + j * (BlockManager.conW + BlockManager.wGap)) * BlockManager.blockRate);
-				yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
+				int xx = (int) ((initX + j * (BlockManager.conW + BlockManager.wGap)) * blockRate);
+				int yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * blockRate);
 
-				ww = (int) (BlockManager.conW * BlockManager.blockRate);
-				hh = (int) (BlockManager.conH * BlockManager.blockRate);
+				float ww = (BlockManager.conW * blockRate);
+				float hh = (BlockManager.conH * blockRate);
 
 
-				g.fillRect(xx, yy, ww, hh);
+				g.fillRect(xx, yy, (int) ww, (int) hh);
 
 				if (isCountView) {
 
-				g.setColor(Color.black);
+					g.setColor(Color.black);
 
-				//xx = (int) ((initX + 2 + j * (BlockManager.conW + BlockManager.wGap)) * BlockManager.blockRate);
-				//yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
-
-				g.drawString(blockContainerCount + "", xx - 1, yy + 11);
+					g.drawString(blockContainerCount + "", xx - 1, yy + 11);
 				}
 			}
 
 			g.setColor(Color.white);
-			yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * BlockManager.blockRate);
+			yy = (int) ((initY + i * (BlockManager.conH + (i > 0 ? BlockManager.hGap : 0))) * blockRate);
 			g.drawString(i + "", xx + 5, yy);
 		}
-
-		g.setColor(Color.white);
-
-		xx = (int) (initX * BlockManager.blockRate);
-
-		yy = (int) ((initY + 10 + block.getBay() * (BlockManager.conH + BlockManager.hGap)) * BlockManager.blockRate);
-
-		g.drawString(blockContainerCount + "/" + (int) totalSlot + "(" + (int) persent + "%)", xx, yy);
-
-
 	}
 
 	@Override
@@ -124,15 +177,14 @@ public class SimViewBlock extends SimViewObject{
 		String type = (String) message.get("type");
 		if (type.equals("block")) {
 			try {
-			blockContainerCount = block.getContainerCount();
+				blockContainerCount = block.getContainerCount();
 
-			persent = (blockContainerCount / totalSlot) * 100;
+				persent = (blockContainerCount / totalSlot) * 100;
 			} catch (Exception e) {
 				persent = 0;
 			}
 
 		}
-
 	}
 
 	boolean isCountView;

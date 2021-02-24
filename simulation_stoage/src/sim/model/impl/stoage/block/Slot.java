@@ -22,7 +22,7 @@ public class Slot {
 	}
 
 	public int getBlockID() {
-		return blockID;
+		return block.getBlockID();
 	}
 
 	public int getTierIndex() {
@@ -36,7 +36,6 @@ public class Slot {
 	public int getBayIndex() {
 		return bayIndex;
 	}
-	int blockID;
 	int tierIndex;
 	int rowIndex;
 	int bayIndex;
@@ -53,7 +52,6 @@ public class Slot {
 	public Slot(Block block, int bayIndex, int rowIndex, int tierIndex)
 	{
 		this.block=block;
-		this.blockID = block.getBlockID();
 		this.bayIndex=bayIndex;
 		this.rowIndex=rowIndex;
 		this.tierIndex=tierIndex;

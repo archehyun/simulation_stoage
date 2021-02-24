@@ -126,4 +126,9 @@ public class Vector2 {
 		return distX * distX + distY * distY;
 	}
 
+	@Override
+	public String toString() {
+		return "[" + x + "," + y + "]";
+	}
+
 }

@@ -11,10 +11,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import map.cavas.DrawObject;
-import sim.model.impl.stoage.atc.impl.CrossLandSideATC;
-import sim.model.impl.stoage.atc.impl.CrossSeaSideATC;
-import sim.model.impl.stoage.atc.impl.TwinLandSideATC;
-import sim.model.impl.stoage.atc.impl.TwinSeaSideATC;
+import sim.model.impl.stoage.atc.SimATC;
 import sim.model.impl.stoage.block.Block;
 import sim.model.impl.stoage.block.BlockManager;
 import sim.view.SimMain;
@@ -30,7 +27,9 @@ public class SimCanvas extends Canvas implements Runnable {
 	protected ArrayList<DrawObject> draw = new ArrayList<DrawObject>();
 
 	public void addDrawObject(DrawObject object) {
+
 		draw.add(object);
+		System.out.println("add size:" + draw.size());
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -73,7 +72,7 @@ public class SimCanvas extends Canvas implements Runnable {
 			return;
 		}
 
-		main.render();
+		main.render(delta);
 
 		Graphics g = bs.getDrawGraphics();
 
@@ -85,18 +84,22 @@ public class SimCanvas extends Canvas implements Runnable {
 
 		try {
 
+			//			System.out.println("size:" + draw.size());
 			//Collections.reverse(draw);
 			List<DrawObject> unmodifiableList = Collections.unmodifiableList(draw);
 
 			//;
 
 			for (DrawObject str : unmodifiableList) {
+
+				//				System.out.println(str);
 				str.draw(g);
 			}
+			//System.out.println();
 
 			g.setColor(Color.black);
 
-			g.drawString(frameInfo, 0, getHeight() - 15);
+			g.drawString(frameInfo, getWidth() - 125, 0 + 15);
 
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -141,6 +144,7 @@ public class SimCanvas extends Canvas implements Runnable {
 	public void tick() {
 	}
 
+	double delta = 0;
 	@Override
 	public void run() {
 		init();
@@ -151,12 +155,13 @@ public class SimCanvas extends Canvas implements Runnable {
 		frames = 0;
 		ticks = 0;
 		long fpsTimer = System.currentTimeMillis();
-		double delta = 0;
+
 		boolean shouldRender;
 		while (running) {
 			shouldRender = !ISFRAMECAPPED;
 			long now = System.nanoTime();
 			delta += (now - lastTime) / nsPerTick;
+
 			lastTime = now;
 			//if it should tick it does this
 			while (delta >= 1) {
@@ -181,24 +186,9 @@ public class SimCanvas extends Canvas implements Runnable {
 	}
 
 	public void addObject(Object obj) {
-		if (obj instanceof TwinSeaSideATC) {
+		if (obj instanceof SimATC) {
 
-			TwinSeaSideATC atc = (TwinSeaSideATC) obj;
-			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
-
-		} else if (obj instanceof TwinLandSideATC) {
-			TwinLandSideATC atc = (TwinLandSideATC) obj;
-			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
-		}
-
-		else if (obj instanceof CrossLandSideATC) {
-
-			CrossLandSideATC atc = (CrossLandSideATC) obj;
-			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
-
-		} else if (obj instanceof CrossSeaSideATC) {
-
-			CrossSeaSideATC atc = (CrossSeaSideATC) obj;
+			SimATC atc = (SimATC) obj;
 			addDrawObject(new SimViewATC(atc.getAtcID(), atc.getBlockID(), atc.getX(), BlockManager.magin, 0, 0));
 		}
 		else if (obj instanceof Block) {
